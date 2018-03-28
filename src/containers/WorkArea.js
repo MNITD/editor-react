@@ -15,7 +15,9 @@ class WorkArea extends Component{
     render(){
         return (
             <main className="work-area">
-                <Grid/>
+                <Grid initGrid={::this.props.initGrid}/>
+                <Grid initGrid={::this.props.initGrid}/>
+                <Grid initGrid={::this.props.initGrid}/>
             </main>
         );
     }
