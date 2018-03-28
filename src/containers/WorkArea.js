@@ -3,9 +3,10 @@
  */
 import React from 'react';
 import {Component} from 'react';
+import Grid from '../components/grid/Grid'
+
 
 import '../styles/WorkArea.scss';
-
 
 class WorkArea extends Component{
     constructor() {
@@ -14,7 +15,7 @@ class WorkArea extends Component{
     render(){
         return (
             <main className="work-area">
-                WorkArea
+                <Grid/>
             </main>
         );
     }

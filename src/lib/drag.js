@@ -22,7 +22,7 @@ const create = (draggable, {onDrag, dragStart, dragEnd, dragPredicate}) => {
 
             const mappingmove = mousemove
                 .take(1)
-                .tap(dragStart)
+                .tap((pos)=>dragStart(draggable, pos))
                 .concat(mousemove.skip(1))
                 .tap(mm => mm.preventDefault()) // prevent text selecting
                 .map(({clientX, clientY}) => ({
@@ -32,14 +32,14 @@ const create = (draggable, {onDrag, dragStart, dragEnd, dragPredicate}) => {
                 );
             const mouseupLast = mouseup
                 .map(({clientX, clientY}) => [clientX + window.scrollX, clientY + window.scrollY])
-                .map(([endX, endY]) =>  (startX - endX + startY - endY) !== 0 ? dragEnd(): '');
+                .map(([endX, endY]) => (startX - endX + startY - endY) !== 0 ? dragEnd(draggable): '');
 
             return mappingmove.until(mouseupLast);
         });
 
     dragging
         .tap(pos => {moveDraggable(draggable, pos)})
-        .observe(onDrag)
+        .observe((pos) => onDrag(draggable, pos))
 };
 const drag = () => (
     {

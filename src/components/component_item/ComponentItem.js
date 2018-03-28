@@ -13,7 +13,7 @@ class ComponentItem extends Component{
     }
     render(){
         return (
-            <div className="component-item">
+            <div className="component-item" ref={this.props.initDraggable}>
                 {this.props.data.name}
             </div>
         );

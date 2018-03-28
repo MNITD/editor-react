@@ -9,15 +9,39 @@ import {create} from '../lib/drag';
 
 //style
 import '../styles/main.scss';
+import '../styles/draggable.scss';
 
 class App extends Component{
     constructor(){
         super();
     }
+    onDrag(elem, pos){
+        console.log('onDrag');
+    }
+    dragStart(elem, pos){
+        console.log('dragStart');
+        elem.classList.add('draggable--moved');
+    }
+    dragEnd(elem){
+        console.log('dragEnd');
+        elem.classList.remove('draggable--moved');
+    }
+    dragPredicate(){
+        return true;
+    }
+    initDraggable(elem){
+        elem.classList.add('draggable');
+        create(elem, {
+            onDrag: this.onDrag,
+            dragStart: this.dragStart,
+            dragEnd: this.dragEnd,
+            dragPredicate: this.dragPredicate})
+    }
+
     render(){
         return (
             <div>
-                <SidePanel/>
+                <SidePanel initDraggable={::this.initDraggable}/>
                 <WorkArea/>
             </div>
         );

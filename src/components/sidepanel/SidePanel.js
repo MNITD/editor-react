@@ -17,7 +17,7 @@ class SidePanel extends Component{
     render(){
         return (
             <aside className="side-panel">
-                <ComponetList/>
+                <ComponetList initDraggable={::this.props.initDraggable}/>
                 <HierarchyTree/>
             </aside>
         );

@@ -1,0 +1,9 @@
+.draggable{
+  position: relative;
+  &--moved{
+    z-index: 100;
+  }
+  &--preview{
+
+  }
+}
