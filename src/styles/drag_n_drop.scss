@@ -1,6 +1,6 @@
 .draggable{
-  position: relative;
   &--moved{
+    //position: absolute;
     z-index: 100;
   }
   &--preview{
@@ -9,6 +9,6 @@
 }
 .droppable{
   &--outlined{
-    border: 1px solid deepskyblue;
+    border: 2px solid deepskyblue;
   }
 }

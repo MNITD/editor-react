@@ -8,14 +8,19 @@ const mousemove = fromEvent('mousemove', document);
 
 const create = (draggable, {onDrag, dragStart, dragEnd, dragPredicate}) => {
     const mousedown = fromEvent('mousedown', draggable);
-    const moveDraggable = (elem, pos) => {
-        elem.style.top = `${pos.top}px`;
-        elem.style.left = `${pos.left}px`;
+
+    const moveDraggable = (elem, {left, top}) => {
+        const translate = /translate.*?\)/g;
+        const newTranslate =  `translate(${left}px, ${top}px)`;
+        const oldTransform = elem.style.transform;
+        elem.style.transform = oldTransform.indexOf('translate') !== -1 ?
+            oldTransform.replace(translate, newTranslate): ''+newTranslate;
     };
 
     const dragging = mousedown
         .takeWhile(dragPredicate)
-        .map(({clientX, clientY}) => [clientX + window.scrollX, clientY + window.scrollY])
+        // .map(({clientX, clientY}) => [clientX + window.scrollX, clientY + window.scrollY])
+        .map(({clientX, clientY}) => [clientX, clientY])
         .chain(([startX, startY]) => {
             const startLeft = parseInt(draggable.style.left, 10) || 0;
             const startTop = parseInt(draggable.style.top, 10) || 0;

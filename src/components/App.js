@@ -19,12 +19,13 @@ class App extends Component{
     }
     findDropCandidates (elem, droppables){
         const elemRect = elem.getBoundingClientRect();
+        const centerH = elemRect.top + elemRect.height / 2;
+        const centerW = elemRect.left + elemRect.width / 2;
 
         return droppables
-            .filter(({rect: {left, top}}) => (left < elemRect.right && top < elemRect.bottom))
-            .map(item => ({...item, dist: Math.abs( (item.rect.left - elemRect.left) * (item.rect.top - elemRect.top) )}))
-            .sort((a, b) => a.dist - b.dist);
-        // .sort((a, b) => b.level - a.level);
+            .filter(({rect: {left, right}}) => (left < centerW &&  right > centerW))
+            .filter(({rect: {top, bottom}}) => (top < centerH &&  bottom > centerH))
+            .sort((a, b) => b.level - a.level);
     };
 
     updatePreview(elem, oldPreview, dropCandidates, draggables) {
@@ -42,11 +43,13 @@ class App extends Component{
 
     outlineDroppable(dropCandidates, oldOutlined){
         let outlined = oldOutlined;
+        console.log(dropCandidates.length, outlined);
         if(dropCandidates.length > 0){
             if(outlined) outlined.node.classList.remove('droppable--outlined');
             dropCandidates[0].node.classList.add('droppable--outlined');
+            outlined = dropCandidates[0];
         }
-        outlined = dropCandidates[0];
+
         return outlined;
     }
 
@@ -56,12 +59,21 @@ class App extends Component{
         this.tempState.outlinedDroppable = this.outlineDroppable(dropCandidates, this.tempState.outlinedDroppable);
     }
     dragStart(elem, pos){
-        // console.log('dragStart');
+        // const copy = elem.cloneNode(true);
+        // elem.parentNode.replaceChild(copy, elem);
+        // document.body.appendChild(elem);
         elem.classList.add('draggable--moved');
     }
     dragEnd(elem){
-        this.tempState.outlinedDroppable.node.classList.remove('droppable--outlined');
-        this.tempState.outlinedDroppable = null;
+        if(this.tempState.outlinedDroppable){
+            const translate = /translate.*?\)/g;
+
+            this.tempState.outlinedDroppable.node.classList.remove('droppable--outlined');
+            elem.parentNode.removeChild(elem);
+            elem.style.transform = elem.style.transform.replace(translate, '');
+            this.tempState.outlinedDroppable.node.appendChild(elem);
+            this.tempState.outlinedDroppable = null;
+        }
         elem.classList.remove('draggable--moved');
 
     }
@@ -71,13 +83,16 @@ class App extends Component{
     initDraggable(elem){
         elem.classList.add('draggable');
         this.tempState = {...this.tempState, draggables: [...this.tempState.draggables, elem]};
-        const {onDrag, dragStart, dragEnd, dragPredicate} = this;
-        create(elem, {onDrag: ::this.onDrag, dragStart, dragEnd: ::this.dragEnd, dragPredicate})
+        create(elem, {
+            onDrag: ::this.onDrag,
+            dragStart: ::this.dragStart,
+            dragEnd: ::this.dragEnd,
+            dragPredicate: ::this.dragPredicate})
     }
 
     initGrid(elem){
         const rect = elem.getBoundingClientRect();
-        this.tempState = {...this.tempState, grids: [...this.tempState.grids, {node: elem, rect}]};
+        this.tempState = {...this.tempState, grids: [...this.tempState.grids, {node: elem, rect, level: 0}]};
     }
 
     componentDidMount(){
