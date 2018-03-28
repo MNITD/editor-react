@@ -1,0 +1,26 @@
+{
+  "parserOptions": {
+    "ecmaVersion": 2018,
+    "sourceType": "module"
+  },
+  "rules": {
+    "semi": 2,
+    "prefer-arrow-callback": 1,
+    "no-duplicate-imports":1,
+    "no-confusing-arrow": 1,
+    "prefer-destructuring": 1,
+    "quotes":[1, "single"],
+    "max-depth": [1, {"max": 4}],
+    "max-nested-callbacks": [1, {"max": 4}],
+    "max-statements":[1, { "max": 10 }, { "ignoreTopLevelFunctions": true }],
+    "dot-notation": 1,
+    "no-sync": [1, { "allowAtRootLevel": false }],
+    "one-var": 1,
+    "no-multi-assign": 1,
+    "operator-linebreak": [1, "none"],
+    "comma-dangle": [1, "always-multiline"],
+    "no-new-wrappers": 1,
+    "radix": 1,
+    "no-underscore-dangle": 1
+  }
+}

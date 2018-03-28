@@ -5,19 +5,19 @@ import React from 'react';
 import {Component} from 'react';
 
 // style
-// import './HierarchyTree.scss';
+import './ComponentItem.scss';
 
-class HierarchyTree extends Component{
+class ComponentItem extends Component{
     constructor(){
         super();
     }
     render(){
         return (
-            <div>
-                HierarchyTree
+            <div className="component-item">
+                {this.props.data.name}
             </div>
         );
     }
 }
 
-export default HierarchyTree;
+export default ComponentItem;
