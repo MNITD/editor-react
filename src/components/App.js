@@ -20,8 +20,8 @@ class App extends Component {
 
     findDropCandidates(elem, droppables) {
         const elemRect = elem.getBoundingClientRect();
-        const centerH = elemRect.top + elemRect.height / 2;
-        const centerW = elemRect.left + elemRect.width / 2;
+        const centerH = elemRect.top  + window.scrollY + elemRect.height / 2;
+        const centerW = elemRect.left + window.scrollX + elemRect.width / 2;
 
         return droppables
             .filter(({rect: {left, right}}) => (left < centerW && right > centerW))
@@ -60,21 +60,30 @@ class App extends Component {
         return outlined;
     }
 
+    // recalculateGrids(grids) {
+    //     return grids.map((grid) => ({...grid, rect: grid.node.getBoundingClientRect()}));
+    // }
+
     onDrag(elem, pos) {
-        console.log(elem.style.transform);
+        // console.log(elem.style.transform);
+        console.log('top', elem.style.top, 'rectTop', elem.getBoundingClientRect().top + window.scrollY);
         const dropCandidates = this.findDropCandidates(elem, this.tempState.grids);
         this.tempState.preview = this.updatePreview(elem, this.tempState.preview, dropCandidates, this.tempState.draggables);
         this.tempState.outlinedDroppable = this.outlineDroppable(dropCandidates, this.tempState.outlinedDroppable);
     }
 
     dragStart(elem, pos) {
-        if(elem.parentNode.classList.contains('component-list')){
+
+        const {top, left} = elem.getBoundingClientRect();
+
+        elem.style.top = `${top + window.scrollY}px`;
+        elem.style.left = `${left + window.scrollX}px`;
+        // console.log('style.top,',  elem.style.top);
+        if (elem.parentNode.classList.contains('component-list')) {
             const copy = elem.cloneNode(true);
             elem.parentNode.replaceChild(copy, elem);
+            console.log('copy')
         }
-        const {top, left} = elem.getBoundingClientRect();
-        elem.style.top = `${top}px`;
-        elem.style.left = `${left}px`;
         document.body.appendChild(elem);
         elem.classList.add('draggable--moved');
 
@@ -92,6 +101,8 @@ class App extends Component {
         }
         this.replacePreviewWith(this.tempState.preview, elem);
         this.tempState.preview = null;
+        elem.style.top = 0;
+        elem.style.left = 0;
         elem.classList.remove('draggable--moved');
 
     }
@@ -116,8 +127,13 @@ class App extends Component {
         this.tempState = {...this.tempState, grids: [...this.tempState.grids, {node: elem, rect, level: 0}]};
     }
 
+
     componentDidMount() {
         console.log(this.tempState);
+        // window.addEventListener('scroll', () => {
+        //     console.log('recalulation');
+        //     this.tempState.grids = this.recalculateGrids(this.tempState.grids)
+        // })
     }
 
     render() {

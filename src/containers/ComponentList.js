@@ -26,14 +26,14 @@ class ComponentList extends Component{
     getItems(){
         return this.state.items
             .map( (item, index) => (
-                <ComponentItem key={index} data={item} initDraggable={::this.props.initDraggable} className="component-list"/>
+                <ComponentItem key={index} data={item} initDraggable={::this.props.initDraggable}/>
                 )
             );
     }
 
     render(){
         return (
-            <div>
+            <div className="component-list">
                 {this.getItems()}
             </div>
         );
