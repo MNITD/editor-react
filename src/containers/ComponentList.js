@@ -26,7 +26,7 @@ class ComponentList extends Component{
     getItems(){
         return this.state.items
             .map( (item, index) => (
-                <ComponentItem key={index} data={item} initDraggable={::this.props.initDraggable}/>
+                <ComponentItem key={index} data={item} initDraggable={::this.props.initDraggable} className="component-list"/>
                 )
             );
     }

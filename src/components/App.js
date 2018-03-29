@@ -61,16 +61,23 @@ class App extends Component {
     }
 
     onDrag(elem, pos) {
+        console.log(elem.style.transform);
         const dropCandidates = this.findDropCandidates(elem, this.tempState.grids);
         this.tempState.preview = this.updatePreview(elem, this.tempState.preview, dropCandidates, this.tempState.draggables);
         this.tempState.outlinedDroppable = this.outlineDroppable(dropCandidates, this.tempState.outlinedDroppable);
     }
 
     dragStart(elem, pos) {
-        // const copy = elem.cloneNode(true);
-        // elem.parentNode.replaceChild(copy, elem);
-        // document.body.appendChild(elem);
+        if(elem.parentNode.classList.contains('component-list')){
+            const copy = elem.cloneNode(true);
+            elem.parentNode.replaceChild(copy, elem);
+        }
+        const {top, left} = elem.getBoundingClientRect();
+        elem.style.top = `${top}px`;
+        elem.style.left = `${left}px`;
+        document.body.appendChild(elem);
         elem.classList.add('draggable--moved');
+
     }
 
     dragEnd(elem) {
@@ -78,6 +85,7 @@ class App extends Component {
             const translate = /translate.*?\)/g;
             this.tempState.outlinedDroppable.node.classList.remove('droppable--outlined');
             elem.parentNode.removeChild(elem);
+            console.log(elem.style.transform);
             elem.style.transform = elem.style.transform.replace(translate, '');
             this.tempState.outlinedDroppable.node.appendChild(elem);
             this.tempState.outlinedDroppable = null;
