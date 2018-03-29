@@ -1,8 +1,6 @@
 .draggable{
   &--moved{
     position: absolute;
-    //z-index: 100;
-    //transform: rotate(-3deg);
     max-height: 34px;
     box-sizing: border-box;
   }
@@ -15,7 +13,6 @@
     box-sizing: border-box;
     margin: 20px;
     flex:1;
-    //z-index: auto;
   }
 
 }

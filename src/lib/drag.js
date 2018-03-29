@@ -17,22 +17,14 @@ const create = (draggable, {onDrag, dragStart, dragEnd, dragPredicate}) => {
             oldTransform.replace(translate, newTranslate): ''+newTranslate;
     };
 
-    // const moveDraggable = (elem, pos) => {
-    //     elem.style.top = `${pos.top}px`;
-    //     elem.style.left = `${pos.left}px`;
-    // };
-
     const dragging = mousedown
         .takeWhile(dragPredicate)
         .tap(() => console.log(window.scrollX, window.scrollY))
-        // .map(({clientX, clientY}) => [clientX + window.scrollX, clientY + window.scrollY])
-        // .map(({clientX, clientY}) => [clientX - window.scrollX, clientY - window.scrollY])
         .map(({clientX, clientY}) => [clientX, clientY])
         .chain(([startX, startY]) => {
             const startLeft = parseInt(draggable.style.left, 10) || 0;
             const startTop = parseInt(draggable.style.top, 10) || 0;
 
-            console.log('startTop', startTop);
             const mappingmove = mousemove
                 .take(1)
                 .tap((pos)=>dragStart(draggable, pos))
@@ -44,8 +36,6 @@ const create = (draggable, {onDrag, dragStart, dragEnd, dragPredicate}) => {
                     })
                 );
             const mouseupLast = mouseup
-                // .map(({clientX, clientY}) => [clientX + window.scrollX, clientY + window.scrollY])
-                // .map(({clientX, clientY}) => [clientX - window.scrollX, clientY - window.scrollY])
                 .map(({clientX, clientY}) => [clientX, clientY])
                 .map(([endX, endY]) => (startX - endX + startY - endY) !== 0 ? dragEnd(draggable): '');
 

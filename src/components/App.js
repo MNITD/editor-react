@@ -6,6 +6,8 @@ import {Component} from 'react';
 import WorkArea from '../containers/WorkArea';
 import SidePanel from './sidepanel/SidePanel';
 import {create} from '../lib/drag';
+import addBlock from '../redux/actions/addBlock.action'
+import {connect}  from 'react-redux';
 
 //style
 import '../styles/main.scss';
@@ -28,6 +30,7 @@ class App extends Component {
             .filter(({rect: {top, bottom}}) => (top < centerH && bottom > centerH))
             .sort((a, b) => b.level - a.level);
     };
+
     findNeighbours (elem, candidates){
         const elemRect = elem.getBoundingClientRect();
         return candidates
@@ -36,7 +39,6 @@ class App extends Component {
             .map(item => ({...item, dist: item.rect.left - elemRect.left}))
             .sort((a, b) => Math.abs(a.dist) - Math.abs(b.dist));
     };
-
 
     updatePreview(elem, oldPreview, dropCandidates, insertElem) {
         let preview = oldPreview;
@@ -157,9 +159,8 @@ class App extends Component {
         this.tempState = {...this.tempState, grids: [...this.tempState.grids, {node: elem, rect, level: 0}]};
     }
 
-
     componentDidMount() {
-        console.log(this.tempState);
+        console.log(this.tempState, this.props.blocks, this.props.addBlock);
     }
 
     render() {
@@ -172,4 +173,9 @@ class App extends Component {
     }
 }
 
-export default App;
+const mapStateToProps = (state) => ({
+    blocks:  [...state.blocks]
+});
+
+
+export default connect(mapStateToProps, {addBlock})(App);
