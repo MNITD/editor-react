@@ -1,11 +1,20 @@
 .draggable{
   &--moved{
-    //position: absolute;
-    z-index: 100;
+    //position: relative;
+    //z-index: 100;
   }
-  &--preview{
 
+  &-preview{
+    width: 100%;
+    background-color: #dde3ea;
+    border:1px solid  #d0d3d6;
+    border-radius: 20px;
+    box-sizing: border-box;
+    margin: 20px;
+    flex:1;
+    //z-index: auto;
   }
+
 }
 .droppable{
   &--outlined{

@@ -13,9 +13,7 @@ class Grid extends Component{
     }
     render(){
         return (
-            <div className="grid" ref={this.props.initGrid}>
-                Grid
-            </div>
+            <div className="grid" ref={this.props.initGrid}/>
         );
     }
 }

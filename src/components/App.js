@@ -11,41 +11,48 @@ import {create} from '../lib/drag';
 import '../styles/main.scss';
 import '../styles/drag_n_drop.scss';
 
-class App extends Component{
-    constructor(){
+class App extends Component {
+    constructor() {
         super();
         this.state = {draggables: []};
-        this.tempState = {draggables:[], grids:[]};
+        this.tempState = {draggables: [], grids: []};
     }
-    findDropCandidates (elem, droppables){
+
+    findDropCandidates(elem, droppables) {
         const elemRect = elem.getBoundingClientRect();
         const centerH = elemRect.top + elemRect.height / 2;
         const centerW = elemRect.left + elemRect.width / 2;
 
         return droppables
-            .filter(({rect: {left, right}}) => (left < centerW &&  right > centerW))
-            .filter(({rect: {top, bottom}}) => (top < centerH &&  bottom > centerH))
+            .filter(({rect: {left, right}}) => (left < centerW && right > centerW))
+            .filter(({rect: {top, bottom}}) => (top < centerH && bottom > centerH))
             .sort((a, b) => b.level - a.level);
     };
 
     updatePreview(elem, oldPreview, dropCandidates, draggables) {
         let preview = oldPreview;
-        if (dropCandidates[0]){// && checkIntersection(draggables, dropCandidates[0], elem)) {
+        if (dropCandidates[0]) {// && checkIntersection(draggables, dropCandidates[0], elem)) {
             if (preview) preview.parentNode.removeChild(preview);
             preview = document.createElement('div');
             preview.classList.add('draggable-preview');
-            preview.style.height = elem.style.height;
-            preview.style.top = elem.style.top;
             dropCandidates[0].node.appendChild(preview);
+            // preview.style.zIndex = -1;
+            preview.style.height = dropCandidates[0].rect.height - 42 + 'px';//elem.style.height;
         }
         return preview;
     };
 
-    outlineDroppable(dropCandidates, oldOutlined){
+    replacePreviewWith(preview, elem) {
+        if (preview) {
+            elem.parentNode.removeChild(elem);
+            preview.parentNode.replaceChild(elem, preview);
+        }
+    }
+
+    outlineDroppable(dropCandidates, oldOutlined) {
         let outlined = oldOutlined;
-        console.log(dropCandidates.length, outlined);
-        if(dropCandidates.length > 0){
-            if(outlined) outlined.node.classList.remove('droppable--outlined');
+        if (dropCandidates.length > 0) {
+            if (outlined) outlined.node.classList.remove('droppable--outlined');
             dropCandidates[0].node.classList.add('droppable--outlined');
             outlined = dropCandidates[0];
         }
@@ -53,53 +60,59 @@ class App extends Component{
         return outlined;
     }
 
-    onDrag(elem, pos){
+    onDrag(elem, pos) {
         const dropCandidates = this.findDropCandidates(elem, this.tempState.grids);
         this.tempState.preview = this.updatePreview(elem, this.tempState.preview, dropCandidates, this.tempState.draggables);
         this.tempState.outlinedDroppable = this.outlineDroppable(dropCandidates, this.tempState.outlinedDroppable);
     }
-    dragStart(elem, pos){
+
+    dragStart(elem, pos) {
         // const copy = elem.cloneNode(true);
         // elem.parentNode.replaceChild(copy, elem);
         // document.body.appendChild(elem);
         elem.classList.add('draggable--moved');
     }
-    dragEnd(elem){
-        if(this.tempState.outlinedDroppable){
-            const translate = /translate.*?\)/g;
 
+    dragEnd(elem) {
+        if (this.tempState.outlinedDroppable) {
+            const translate = /translate.*?\)/g;
             this.tempState.outlinedDroppable.node.classList.remove('droppable--outlined');
             elem.parentNode.removeChild(elem);
             elem.style.transform = elem.style.transform.replace(translate, '');
             this.tempState.outlinedDroppable.node.appendChild(elem);
             this.tempState.outlinedDroppable = null;
         }
+        this.replacePreviewWith(this.tempState.preview, elem);
+        this.tempState.preview = null;
         elem.classList.remove('draggable--moved');
 
     }
-    dragPredicate(){
+
+    dragPredicate() {
         return true;
     }
-    initDraggable(elem){
+
+    initDraggable(elem) {
         elem.classList.add('draggable');
         this.tempState = {...this.tempState, draggables: [...this.tempState.draggables, elem]};
         create(elem, {
             onDrag: ::this.onDrag,
             dragStart: ::this.dragStart,
             dragEnd: ::this.dragEnd,
-            dragPredicate: ::this.dragPredicate})
+            dragPredicate: ::this.dragPredicate
+        })
     }
 
-    initGrid(elem){
+    initGrid(elem) {
         const rect = elem.getBoundingClientRect();
         this.tempState = {...this.tempState, grids: [...this.tempState.grids, {node: elem, rect, level: 0}]};
     }
 
-    componentDidMount(){
+    componentDidMount() {
         console.log(this.tempState);
     }
 
-    render(){
+    render() {
         return (
             <div>
                 <SidePanel initDraggable={::this.initDraggable}/>
