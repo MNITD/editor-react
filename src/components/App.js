@@ -46,7 +46,7 @@ class App extends Component {
             if (preview) preview.parentNode.removeChild(preview);
             preview = document.createElement('div');
             preview.classList.add('draggable-preview');
-            const previewPadding = 42;
+            const previewPadding = 44;
             preview.style.height = dropCandidates[0].rect.height - previewPadding + 'px';
             const parentNode = dropCandidates[0].node;
             const insertAfter = (elem, after) =>{
@@ -110,14 +110,17 @@ class App extends Component {
 
         const {top, left} = elem.getBoundingClientRect();
 
-        elem.style.top = `${top + window.scrollY}px`;
-        elem.style.left = `${left + window.scrollX}px`;
+
         // console.log('style.top,',  elem.style.top);
         if (elem.parentNode.classList.contains('component-list')) {
             const copy = elem.cloneNode(true);
             elem.parentNode.replaceChild(copy, elem);
+            this.initDraggable(copy);
             console.log('copy')
         }
+        elem.style.top = `${top + window.scrollY}px`;
+        elem.style.left = `${left + window.scrollX}px`;
+
         document.body.appendChild(elem);
         elem.classList.add('draggable--moved');
     }
