@@ -35,9 +35,9 @@ class App extends Component {
         const elemRect = elem.getBoundingClientRect();
         const getArea = ({rect: {left, right}}, index) => {
             if (left < elemRect.left)
-                return {area: right - elemRect.left, direction: index===candidates.length -1? 'after': 'before'};
+                return {area: right - elemRect.left, direction: index === candidates.length - 1 ? 'after' : 'before'};
 
-            return {area: elemRect.right -left, direction: index===0? 'before' : 'after'}
+            return {area: elemRect.right - left, direction: index === 0 ? 'before' : 'after'}
         };
         return candidates
             .map((item) => ({node: item, rect: item.getBoundingClientRect()} ))
@@ -48,25 +48,30 @@ class App extends Component {
             .sort((a, b) => b.area - a.area);
     };
 
-    updatePreview(oldPreview, dropCandidates, {node, direction}) {
+    createPreview({rect: {height}}) {
+        const previewPadding = 44;
+        let preview = document.createElement('div');
+        preview.classList.add('draggable-preview');
+        preview.style.height = height - previewPadding + 'px';
+        return preview;
+    }
+
+    updatePreview(oldPreview, dropCandidate, {node, direction}) {
         let preview = oldPreview;
-        if (dropCandidates[0]) {
-            if(preview){
-                if(preview === node) return preview;
+        if (dropCandidate) {
+            if (preview) {
+                if (preview === node) return preview;
                 preview.parentNode.removeChild(preview);
             }
-            preview = document.createElement('div');
-            preview.classList.add('draggable-preview');
-            const previewPadding = 44;
-            preview.style.height = dropCandidates[0].rect.height - previewPadding + 'px';
+            preview = this.createPreview(dropCandidate);
             const insertAfter = (preview, {parentNode, nextSibling}) => {
                 if (nextSibling)
                     parentNode.insertBefore(preview, nextSibling);
                 else
-                   parentNode.appendChild(preview);
+                    parentNode.appendChild(preview);
             };
-            const parentNode = dropCandidates[0].node;
-            switch(direction){
+            const parentNode = dropCandidate.node;
+            switch (direction) {
                 case 'before':
                     parentNode.insertBefore(preview, node);
                     break;
@@ -89,12 +94,12 @@ class App extends Component {
 
     }
 
-    outlineDroppable(dropCandidates, oldOutlined) {
+    outlineDroppable(dropCandidate, oldOutlined) {
         let outlined = oldOutlined;
-        if (dropCandidates.length > 0) {
+        if (dropCandidate) {
             if (outlined) outlined.node.classList.remove('droppable--outlined');
-            dropCandidates[0].node.classList.add('droppable--outlined');
-            outlined = dropCandidates[0];
+            dropCandidate.node.classList.add('droppable--outlined');
+            outlined = dropCandidate;
         }
 
         return outlined;
@@ -105,16 +110,23 @@ class App extends Component {
     // }
 
     onDrag(elem, pos) {
-        const dropCandidates = this.findDropCandidates(elem, this.tempState.grids);
-        if (dropCandidates.length > 0) {
-            const neighbours = this.findNeighbours(elem, [...dropCandidates[0].node.children]);
-            if (neighbours.length === 0)
-                this.tempState.preview = this.updatePreview(this.tempState.preview, dropCandidates, {});
-            else
-                this.tempState.preview = this.updatePreview(this.tempState.preview, dropCandidates, neighbours[0]);
-        }
+        let {preview} = this.tempState;
+        const {grids, outlinedDroppable} = this.tempState;
+        const [dropCandidate] = this.findDropCandidates(elem, grids);
 
-        this.tempState.outlinedDroppable = this.outlineDroppable(dropCandidates, this.tempState.outlinedDroppable);
+        if (dropCandidate) {
+            const [neighbour] = this.findNeighbours(elem, [...dropCandidate.node.children]);
+            if (neighbour)
+                preview = this.updatePreview(preview, dropCandidate, neighbour);
+            else
+                preview = this.updatePreview(preview, dropCandidate, {});
+
+        } else if (preview) {
+            preview.parentNode.removeChild(preview);
+            preview = null;
+        }
+        this.tempState.preview = preview;
+        this.tempState.outlinedDroppable = this.outlineDroppable(dropCandidate, outlinedDroppable);
     }
 
     dragStart(elem, {clientX, clientY}) {
@@ -136,13 +148,14 @@ class App extends Component {
     }
 
     dragEnd(elem) {
-        if (this.tempState.outlinedDroppable) {
+        const {outlinedDroppable} = this.tempState;
+        if (outlinedDroppable) {
             const translate = /translate.*?\)/g;
-            this.tempState.outlinedDroppable.node.classList.remove('droppable--outlined');
+            outlinedDroppable.node.classList.remove('droppable--outlined');
             elem.parentNode.removeChild(elem);
             console.log(elem.style.transform);
             elem.style.transform = elem.style.transform.replace(translate, '');
-            this.tempState.outlinedDroppable.node.appendChild(elem);
+            outlinedDroppable.node.appendChild(elem);
             this.tempState.outlinedDroppable = null;
         }
         this.dropElement(this.tempState.preview, elem);
