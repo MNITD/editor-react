@@ -27,7 +27,7 @@ const create = (draggable, {onDrag, dragStart, dragEnd, dragPredicate}) => {
 
             const mappingmove = mousemove
                 .take(1)
-                .tap((pos)=>dragStart(draggable, pos))
+                .tap((event)=>dragStart(draggable, event))
                 .concat(mousemove.skip(1))
                 .tap(mm => mm.preventDefault()) // prevent text selecting
                 .map(({clientX, clientY}) => ({
