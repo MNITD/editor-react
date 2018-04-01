@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import {Component} from 'react';
-import ComponentItem from '../components/component_item/ComponentItem';
+import ComponentItem from '../components/ComponentItem';
 
 // style
 // import './ComponentList.scss';

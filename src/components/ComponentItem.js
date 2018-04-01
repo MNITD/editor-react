@@ -5,7 +5,7 @@ import React from 'react';
 import {Component} from 'react';
 
 // style
-import './ComponentItem.scss';
+import '../styles/ComponentItem.scss';
 
 class ComponentItem extends Component{
     constructor(){

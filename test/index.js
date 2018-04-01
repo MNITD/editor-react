@@ -3,7 +3,7 @@
  */
 import assert from 'assert';
 
-import blocks from '../src/redux/reducers/blocks.reducer';
+import blocks from '../src/reducers/blocks.reducer';
 
 
 describe('Test reducers', () => {

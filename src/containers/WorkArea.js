@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import {Component} from 'react';
-import Grid from '../components/grid/Grid'
+import Grid from '../components/Grid'
 
 
 import '../styles/WorkArea.scss';

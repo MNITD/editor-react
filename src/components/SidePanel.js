@@ -3,12 +3,12 @@
  */
 import React from 'react';
 import {Component} from 'react';
-import ComponetList from '../../containers/ComponentList';
-import HierarchyTree from '../../containers/HierarchyTree';
+import ComponetList from '../containers/ComponentList';
+import HierarchyTree from '../containers/HierarchyTree';
 
 
 // style
-import './SidePanel.scss';
+import '../styles/SidePanel.scss';
 
 class SidePanel extends Component{
     constructor(){

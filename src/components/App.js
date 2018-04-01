@@ -4,9 +4,9 @@
 import React from 'react';
 import {Component} from 'react';
 import WorkArea from '../containers/WorkArea';
-import SidePanel from './sidepanel/SidePanel';
+import SidePanel from './SidePanel';
 import {create} from '../lib/drag';
-import addBlock from '../redux/actions/addBlock.action'
+import addBlock from '../actions/addBlock.action'
 import {connect}  from 'react-redux';
 
 //style
@@ -107,9 +107,9 @@ class App extends Component {
     }
 
     dragStart(elem, pos) {
+        console.log(pos);
 
         const {top, left} = elem.getBoundingClientRect();
-
 
         // console.log('style.top,',  elem.style.top);
         if (elem.parentNode.classList.contains('component-list')) {

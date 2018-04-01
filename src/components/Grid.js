@@ -5,7 +5,7 @@ import React from 'react';
 import {Component} from 'react';
 
 // style
-import './Grid.scss';
+import '../styles/Grid.scss';
 
 class Grid extends Component{
     constructor(){

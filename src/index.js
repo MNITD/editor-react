@@ -5,7 +5,7 @@ import ReactDOM from 'react-dom';
 import React from 'react';
 import Root from './components/Root';
 
-import configureStore from './redux/configureStore';
+import configureStore from './configureStore';
 
 const store = configureStore();
 

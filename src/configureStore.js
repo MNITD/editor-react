@@ -3,7 +3,7 @@
  */
 import {createStore} from 'redux';
 import editorApp from './reducers/index'
-import {loadState, saveState} from '../../utils/localStorage';
+import {loadState, saveState} from './utils/localStorage';
 import throttle from 'lodash/throttle';
 
 const configureStore = () => {
