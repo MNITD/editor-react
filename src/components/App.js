@@ -33,18 +33,19 @@ class App extends Component {
 
     findNeighbours(elem, candidates) {
         const elemRect = elem.getBoundingClientRect();
-        const getArea = ({rect: {left, right}}, index) => {
+        const getArea = ({rect: {left, right}, index}) => {
+            console.log('index', index);
             if (left < elemRect.left)
                 return {area: right - elemRect.left, direction: index === candidates.length - 1 ? 'after' : 'before'};
 
             return {area: elemRect.right - left, direction: index === 0 ? 'before' : 'after'}
         };
         return candidates
-            .map((item) => ({node: item, rect: item.getBoundingClientRect()} ))
+            .map((item, index) => ({node: item, rect: item.getBoundingClientRect(), index} ))
             .filter(({rect: {left, right}}) => (
                 ( left < elemRect.left && right > elemRect.left ) || ( left < elemRect.right && right > elemRect.right ))
             )
-            .map((item, index) => ({...item, ...getArea(item, index)}))
+            .map((item) => ({...item, ...getArea(item)}))
             .sort((a, b) => b.area - a.area);
     };
 
