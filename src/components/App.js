@@ -34,7 +34,6 @@ class App extends Component {
     findNeighbours(elem, candidates) {
         const elemRect = elem.getBoundingClientRect();
         const getArea = ({rect: {left, right}, index}) => {
-            console.log('index', index);
             if (left < elemRect.left)
                 return {area: right - elemRect.left, direction: index === candidates.length - 1 ? 'after' : 'before'};
 
