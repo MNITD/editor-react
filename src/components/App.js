@@ -4,7 +4,7 @@
 import React from 'react';
 import {Component} from 'react';
 import WorkArea from '../containers/WorkArea';
-import SidePanel from './SidePanel';
+import Menu from './Menu';
 import {create} from '../lib/drag';
 import addBlock from '../actions/addBlock.action'
 import {connect}  from 'react-redux';
@@ -192,7 +192,7 @@ class App extends Component {
     render() {
         return (
             <div>
-                <SidePanel initDraggable={::this.initDraggable}/>
+                <Menu initDraggable={::this.initDraggable}/>
                 <WorkArea initGrid={::this.initGrid}/>
             </div>
         );

@@ -2,13 +2,16 @@
  * Created by bogdan on 29.03.18.
  */
 import {createStore} from 'redux';
-import editorApp from './reducers/index'
-import {loadState, saveState} from './utils/localStorage';
+import middleware from './middleware';
 import throttle from 'lodash/throttle';
+
+import reducer from './reducers'
+import {loadState, saveState} from './utils/localStorage';
+
 
 const configureStore = () => {
     const persistedState = loadState();
-    const store = createStore(editorApp, persistedState);
+    const store = createStore(reducer, persistedState, middleware);
 
     store.subscribe(throttle(() => {
         saveState({editorState: store.getState().editorState})
