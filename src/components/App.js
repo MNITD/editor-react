@@ -34,6 +34,7 @@ class App extends Component {
 
     findNeighbours(elem, candidates) {
         const elemRect = elem.getBoundingClientRect();
+        const previewMargin = 20;
         const getArea = ({rect: {left, right}, index}) => {
             if (left < elemRect.left)
                 return {area: right - elemRect.left, direction: index === candidates.length - 1 ? 'after' : 'before'};
@@ -42,6 +43,12 @@ class App extends Component {
         };
         return candidates
             .map((item, index) => ({node: item, rect: item.getBoundingClientRect(), index} ))
+            .map(({node, rect}) => {
+                if (node.classList.contains('draggable-preview'))
+                    return {node, rect: {...rect, left: rect.left - previewMargin, right: rect.right + previewMargin }};
+
+                return {node, rect};
+            })
             .filter(({rect: {left, right}}) => (
                 ( left < elemRect.left && right > elemRect.left ) || ( left < elemRect.right && right > elemRect.right ))
             )
