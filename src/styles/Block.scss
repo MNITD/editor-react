@@ -1,0 +1,19 @@
+.block{
+  //margin: 4px 0; /*??*/
+  //padding: 8px;
+  height: inherit;
+  color:  var(--color-menu-text);
+  font-size: 14px;
+  //height: 24px;
+  line-height: inherit;
+  padding: 0 12px;
+  min-width: 10px;
+  border-radius: 4px;
+  user-select: none;
+  cursor: default;
+  border: none;
+  display: block;
+  border-left: 5px solid yellow;
+  flex: 1;
+
+}

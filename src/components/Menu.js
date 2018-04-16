@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import {Component} from 'react';
-import ComponetList from '../containers/ComponentList';
+import BlockList from '../containers/BlockList';
 import HierarchyTree from '../containers/HierarchyTree';
 
 
@@ -11,9 +11,6 @@ import HierarchyTree from '../containers/HierarchyTree';
 import '../styles/Menu.scss';
 
 class Menu extends Component{
-    constructor(){
-        super();
-    }
     render(){
         return (
             <nav className="menu">
@@ -24,78 +21,13 @@ class Menu extends Component{
                     <div className="menu__tab-container">
                         <div className="menu__tab-content">
                             <h1 className="menu__tab-heading">Components</h1>
-                            <ul className="menu__tab-list menu__tab-list--primary">
-                                <li className="menu__tab-section">
-                                    <a className="menu__tab-section-title"></a>
-                                    <ul className="menu__tab-list ">
-                                        <li className="menu__tab-subsection">
-                                            <a className="menu__tab-link">
-                                                <span className="menu__tab-subsection-title"></span>
-                                            </a>
-                                        </li>
-                                        <li className="menu__tab-subsection"
-                                            ng-repeat="location in rootVm.user.company.locations track by location.id"
-                                            ui-sref-active="menu__tab-subsection--active">
-                                            <a className="menu__tab-link"
-                                               ui-sref="main-admin.stats.general({'locationId':location.id})">
-                                                <span
-                                                    className="menu__tab-subsection-title"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li className="menu__tab-section" ui-sref-active="menu__tab-section--active">
-                                    <a className="menu__tab-section-title"
-                                       ui-sref="main-admin.stats.clients"></a>
-                                    <ul className="menu__tab-list ">
-                                        <li className="menu__tab-subsection"
-                                            ui-sref-active="menu__tab-subsection--active">
-                                            <a className="menu__tab-link"
-                                               ui-sref="main-admin.stats.clients({'locationId':null})">
-                                                <span
-                                                    className="menu__tab-subsection-title"></span>
-                                            </a>
-                                        </li>
-                                        <li className="menu__tab-subsection"
-                                            ng-repeat="location in rootVm.user.company.locations track by location.id"
-                                            ui-sref-active="menu__tab-subsection--active">
-                                            <a className="menu__tab-link"
-                                               ui-sref="main-admin.stats.clients({'locationId':location.id})">
-                                                <span
-                                                    className="menu__tab-subsection-title"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li className="menu__tab-section" ui-sref-active="menu__tab-section--active">
-                                    <a className="menu__tab-section-title"
-                                       ui-sref="main-admin.stats.products"></a>
-                                    <ul className="menu__tab-list ">
-                                        <li className="menu__tab-subsection"
-                                            ui-sref-active="menu__tab-subsection--active">
-                                            <a className="menu__tab-link"
-                                               ui-sref="main-admin.stats.products({'locationId':null})">
-                                                <span
-                                                    className="menu__tab-subsection-title"></span>
-                                            </a>
-                                        </li>
-                                        <li className="menu__tab-subsection"
-                                            ng-repeat="location in rootVm.user.company.locations track by location.id"
-                                            ui-sref-active="menu__tab-subsection--active">
-                                            <a className="menu__tab-link"
-                                               ui-sref="main-admin.stats.products({'locationId':location.id})">
-                                                <span className="menu__tab-subsection-title"></span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                            </ul>
+                            <BlockList initDraggable={::this.props.initDraggable}/>
                         </div>
                     </div>
                 </div>
 
                 <div className="menu__tab">
-                    <a ui-sref=".clients.list" className="menu__tab-link">
+                    <a href="" className="menu__tab-link">
                         <i className="material-icons">grid_on</i>
                         <div className="menu__tab-container">
                             <div className="menu__tab-content">
@@ -106,25 +38,13 @@ class Menu extends Component{
                 </div>
 
                 <div className="menu__tab">
-                    <a ui-sref=".notifications.pending-booking-requests" className="menu__tab-link">
-                       <span className="menu__badge" data-badge="0">
+                    <a href="" className="menu__tab-link">
+                       <span className="menu__badge" data-badge="1">
                             <i className="material-icons">notifications</i>
                         </span>
                         <div className="menu__tab-container">
                             <div className="menu__tab-content">
-                                <h1 className="menu__tab-heading"></h1>
-                                <ul className="menu__tab-list menu__tab-list--primary">
-                                    <li className="menu__tab-section"
-                                        ui-sref-active="menu__tab-section--active">
-                                        <a className="menu__tab-section-title"
-                                           ui-sref=".notifications.pending-booking-requests"></a>
-                                    </li>
-                                    <li className="menu__tab-section"
-                                        ui-sref-active="menu__tab-section--active">
-                                        <a className="menu__tab-section-title"
-                                           ui-sref=".notifications.booking-requests-history"></a>
-                                    </li>
-                                </ul>
+                                <h1 className="menu__tab-heading">Notifications</h1>
                             </div>
                         </div>
                     </a>
@@ -159,29 +79,22 @@ class Menu extends Component{
                             <h1 className="menu__tab-heading">Settings</h1>
                             <ul className="menu__tab-list menu__tab-list--primary">
                                 <li className="menu__tab-section">
-                                    <a className="menu__tab-section-title"
-                                       href="http://bloknotapp.helpscoutdocs.com/category/8-category"
-                                       ng-hide="rootVm.user.company.language === 'en'"
-                                       target="_blank"></a>
+                                    <a className="menu__tab-section-title" href=""></a>
                                 </li>
-                                <li className="menu__tab-section" ui-sref-active="menu__tab-section--active">
-                                    <a className="menu__tab-section-title"
-                                       ui-sref=".settings.general"></a>
+                                <li className="menu__tab-section" >
+                                    <a className="menu__tab-section-title" href=""></a>
                                 </li>
 
-                                <li className="menu__tab-section" ui-sref-active="menu__tab-section--active">
-                                    <a className="menu__tab-section-title"
-                                       ui-sref=".settings.medcard"></a>
+                                <li className="menu__tab-section">
+                                    <a className="menu__tab-section-title" href=""></a>
                                 </li>
                                 <li className="menu__tab-section menu__tab-section--top-separator">
-                                    <span className="menu__tab-section-title"
-                                          ng-click="rootVm.logout()"></span>
+                                    <span className="menu__tab-section-title">Log out</span>
                                 </li>
                             </ul>
                         </div>
                     </div>
                 </div>
-                {/*<ComponetList initDraggable={::this.props.initDraggable}/>*/}
 
             </nav>
         );

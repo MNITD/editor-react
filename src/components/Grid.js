@@ -8,12 +8,11 @@ import {Component} from 'react';
 import '../styles/Grid.scss';
 
 class Grid extends Component{
-    constructor(){
-        super();
-    }
     render(){
         return (
-            <div className="grid" ref={this.props.initGrid}/>
+            <div className="grid" ref={this.props.initGrid}>
+                {this.props.children}
+            </div>
         );
     }
 }

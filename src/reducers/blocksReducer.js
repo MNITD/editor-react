@@ -3,7 +3,7 @@
  */
 import {combineReducers} from 'redux';
 
-const byId = (state =[], action) =>{
+const blocks = (state =[], action) =>{
     switch (action.type){
         case 'ADD_BLOCK':
             return [...state, action.id];
@@ -12,8 +12,8 @@ const byId = (state =[], action) =>{
     }
 };
 
-const blocks = combineReducers({
-    byId
-});
+// const blocks = combineReducers({
+//     byId
+// });
 
 export default blocks;

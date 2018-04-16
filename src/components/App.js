@@ -14,9 +14,10 @@ import '../styles/main.scss';
 import '../styles/drag_n_drop.scss';
 
 class App extends Component {
-    constructor() {
-        super();
-        this.state = {draggables: []};
+    constructor(props) {
+        super(props);
+        console.log('store:blocks', this.props);
+
         this.tempState = {draggables: [], grids: []};
     }
 
@@ -131,7 +132,7 @@ class App extends Component {
 
     dragStart(elem, {clientX, clientY}) {
 
-        if (elem.parentNode.classList.contains('component-list')) {
+        if (elem.parentNode.classList.contains('menu__tab-subsection')) {
             const copy = elem.cloneNode(true);
             elem.parentNode.replaceChild(copy, elem);
             this.initDraggable(copy);
@@ -193,15 +194,16 @@ class App extends Component {
         return (
             <div>
                 <Menu initDraggable={::this.initDraggable}/>
-                <WorkArea initGrid={::this.initGrid}/>
+                <WorkArea blocks={this.props.blocks} initGrid={::this.initGrid}  initDraggable={::this.initDraggable}/>
             </div>
         );
     }
 }
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = (state) =>{ console.log(state.blocks); return  {
     blocks: [...state.blocks]
-});
+}
+};
 
 
-export default connect(mapStateToProps, {addBlock})(App);
+export default connect(mapStateToProps)(App);

@@ -3,6 +3,7 @@
   --color-menu-tab: #3c92f2;
   --color-menu-text: #8390aa;
   --color-menu-tab-title-bg: #162f59;
+  --color-cherry-red: #790604;
 
 
   width: 60px;
@@ -131,8 +132,9 @@
     }
 
     &-subsection{
-      height: 44px;
-      line-height: 44px;
+      height: 28px;
+      padding: 8px 0;
+      line-height: 28px;
       color: var(--color-menu-text);
       position:relative;
       padding-left: 20px;
@@ -158,6 +160,7 @@
         color:  var(--color-menu-text);
         font-size: 14px;
         height: 24px;
+        line-height: 24px;
         padding: 2px 12px;
         min-width: 10px;
         border-radius: 4px;
@@ -195,7 +198,7 @@
     padding: 0 4px;
     height:16px;
     text-align:center;
-    line-height:14px;
+    line-height:16px;
     position:absolute;
     top:-16px;
     left:10px;

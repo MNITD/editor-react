@@ -3,7 +3,7 @@
  */
 import React from 'react';
 import {Component} from 'react';
-import ComponetList from '../containers/ComponentList';
+import ComponetList from '../containers/BlockList';
 import HierarchyTree from '../containers/HierarchyTree';
 
 
