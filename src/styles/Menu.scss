@@ -1,0 +1,209 @@
+.menu {
+  --color-menu: #102245;
+  --color-menu-tab: #3c92f2;
+  --color-menu-text: #8390aa;
+  --color-menu-tab-title-bg: #162f59;
+
+
+  width: 60px;
+  height: 100vh;
+  background-color: var(--color-menu);
+  position: fixed;
+  z-index: 0;
+  //display: flex;
+  //flex-direction: column;
+  //justify-content: flex-start;
+
+  &__tab {
+    height: 60px;
+    width: 60px;
+    color: var(--color-menu-text);
+    line-height: 74px;
+    text-align: center;
+    cursor: pointer;
+    user-select: none;
+
+    &-link{
+      color: inherit;
+      display: block;
+    }
+    &-link:hover,
+    &-link:focus{
+      color: white;
+      text-decoration: none;
+    }
+
+    &:hover,
+    &--active{
+      color: white;
+      background-color: var(--color-menu-tab);
+      box-shadow: inset -3px 0 0 0 var(--color-menu-tab);
+    }
+
+    &:hover  &-container,
+    &--active  &-container{
+      display: block;
+    }
+
+    &:hover  .menu__badge[data-badge]:after{
+      border-color:var(--color-menu-tab);
+    }
+
+    &-container{
+      padding-left: 24px;
+      transform: translate(60px, -70px);
+      display: none; ////
+
+      &:before {
+        content: '';
+        position: absolute;
+        top: 14px;
+        left: 0px;
+        width: 14px;
+        height: 0;
+        border-top: 10px solid transparent;
+        border-bottom: 10px solid transparent;
+        border-right: 10px solid var(--color-menu);
+      }
+    }
+
+    &-content {
+      background-color: var(--color-menu);
+      border-radius: 7px;
+      box-shadow: 0 15px 26px 0 rgba(0, 0, 0, 0.18);
+      width: 224px;
+      //height: 220px;
+    }
+
+    &-heading{
+      line-height: 44px;
+      height: 44px;
+      font-size: 15px;
+      margin: 0;
+    }
+
+    &-list{
+      text-align: left;
+      padding-left: 0px;
+      margin: 0;
+      list-style-type: none;
+      display: none;
+      &--primary{
+        display: block; //TODO add animation
+      }
+    }
+
+    &-section{
+      color: var(--color-menu-text);
+
+      &--active{
+        box-shadow: inset -4px 0 0 0 #3c92f2;
+      }
+      &:hover &-title,
+      &--active &-title{
+        color: white;
+        margin-right: 4px;
+        font-weight: 600;
+        font-size: 15px;
+        text-decoration: none;
+      }
+      &--top-separator{
+        border-top: 1px solid rgba(210, 213, 224, 0.17);
+      }
+      //&:not(:first-child) &-title{
+      //  box-shadow: inset 0 1px 0 0 var(--color-menu-tab-title-bg;
+      //}
+    }
+
+    &-section-title{
+      background-color: var(--color-menu-tab-title-bg);
+      color: var(--color-menu-text);
+      display: block;
+      height: 44px;
+      margin: 0;
+      padding-left: 18px;
+      line-height: 44px;
+    }
+
+    &-section:hover &-list,
+    &-section--active &-list{
+      display: block; // TODO add animation
+    }
+
+    &-subsection{
+      height: 44px;
+      line-height: 44px;
+      color: var(--color-menu-text);
+      position:relative;
+      padding-left: 20px;
+      margin-right: 4px;
+
+      &:not(:first-child){
+        box-shadow: inset 0 1px 0 0 var(--color-menu-tab-title-bg);
+      }
+
+      &:hover &-title,
+      &--active &-title{
+        font-weight: 600;
+        color: white;
+        background-color:  var(--color-menu-tab-title-bg);
+        text-decoration: none;
+
+        &:before{
+          background-color: white;
+        }
+      }
+
+      &-title{
+        color:  var(--color-menu-text);
+        font-size: 14px;
+        height: 24px;
+        padding: 2px 12px;
+        min-width: 10px;
+        border-radius: 4px;
+
+        &:before{
+          content: '';
+          width: 3px;
+          height: 3px;
+          border-radius: 50%;
+          background-color: var(--color-menu-text);
+          top: 20px;
+          left: 24px;
+          position: absolute;
+        }
+      }
+    }
+  }
+
+  &__toggle {
+    color: white;
+    box-shadow: inset 0 -1px 0 0 rgba(210, 213, 224, 0.17)
+  }
+
+  &__badge {
+    position:relative;
+  }
+  &__badge[data-badge]:after {
+    content: attr(data-badge);
+    border: 2px solid var(--color-menu);
+    border-radius: 60px;
+    font-size: 12px;
+    background:var(--color-cherry-red);
+    color:white;
+    min-width:20px;
+    padding: 0 4px;
+    height:16px;
+    text-align:center;
+    line-height:14px;
+    position:absolute;
+    top:-16px;
+    left:10px;
+    //box-shadow:0 0 1px #333;
+  }
+  &__badge[data-badge='0']:after {
+    content: none;
+    display: none;
+  }
+}
+
