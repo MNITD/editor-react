@@ -11,35 +11,38 @@ import {loadState, saveState} from './utils/localStorage';
 
 const configureStore = () => {
     const persistedState = loadState() || {
+    // const persistedState = {
         blocks: [
+            // {
+            //     blockType: 'Grid',
+            //     children: [
+            //         {
+            //
+            //             blockType: 'Regular',
+            //             flex: 12
+            //         },
+            //         {
+            //             blockType: 'Regular',
+            //             flex: 12
+            //         }
+            //     ]
+            // },
             {
-                id: '0',
-                type: 'Grid',
-                children: [
-                    {
-                        id: 1,
-                        type: 'Regular',
-                        flex: 12
-                    },
-                    {
-                        id: 2,
-                        type: 'Regular',
-                        flex: 12
-                    }
-                ]
-            },
-            {
-                id: '0',
-                type: 'Grid',
+                blockType: 'Grid',
                 children: [],
-            }
+            },
+
+            {
+                blockType: 'Grid',
+                children: [],
+            },
         ]
     };
-    console.log(persistedState);
+    // console.log(persistedState);
     const store = createStore(reducer, persistedState, middleware);
 
     store.subscribe(throttle(() => {
-        saveState({editorState: store.getState().editorState})
+        saveState(store.getState())
     }, 1000));
 
     return store;

@@ -8,12 +8,29 @@ import {Component} from 'react';
 import '../styles/Block.scss';
 
 class Block extends Component{
+    constructor(props){
+        super(props);
+        this.setRef = (elem) =>{
+            this.blockRef = elem;
+        };
+    }
+
     render(){
+        const {index, data:{blockType, flex}} = this.props;
         return (
-            <div className={`block block--flex-${this.props.data.flex}`} ref={this.props.initDraggable}>
-                {this.props.data.type}
+            <div className={`block block--flex-${flex}`} data-index={index} data-type={blockType} ref={this.setRef}>
+                {blockType}
             </div>
         );
+    }
+    componentDidMount(){
+        this.subscription = this.props.initDraggable(this.blockRef);
+        // TODO subscribe for drag
+    }
+    componentWillUnmount(){
+        console.log('unmount');
+        this.subscription.unsubscribe();
+        //TODO unsubscribe from drag
     }
 }
 

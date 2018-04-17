@@ -6,9 +6,9 @@ import {Component} from 'react';
 import Block from '../components/Block';
 
 // style
-// import './ComponentList.scss';
+// import './BlockList.scss';
 
-class ComponentList extends Component {
+class BlockList extends Component {
     constructor() {
         super();
         this.state = {
@@ -16,19 +16,23 @@ class ComponentList extends Component {
                 {
                     name: 'Primary',
                     items: [
-                        {type: 'Text', flex: 12},
-                        {type: 'Regular', flex: 12},
+                        {blockType: 'Text', flex: 12},
+                        {blockType: 'Regular', flex: 12},
                     ]
                 },
                 {
                     name: 'Secondary',
                     items: [
-                        {type: 'Text', flex: 12},
-                        {type: 'Regular', flex: 12},
+                        {blockType: 'Text', flex: 12},
+                        {blockType: 'Regular', flex: 12},
                     ]
                 },
             ]
         }
+    }
+
+    componentDidMount(){
+        console.log('BlockList', 'componentDidMount');
     }
 
     getSections(sections) {
@@ -61,4 +65,4 @@ class ComponentList extends Component {
     }
 }
 
-export default ComponentList;
+export default BlockList;

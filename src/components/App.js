@@ -6,8 +6,8 @@ import {Component} from 'react';
 import WorkArea from '../containers/WorkArea';
 import Menu from './Menu';
 import {create} from '../lib/drag';
-import addBlock from '../actions/addBlock.action'
-import {connect}  from 'react-redux';
+import {connect} from 'react-redux';
+import {addBlock, moveBlock, deleteBlock} from '../actions/blockActions';
 
 //style
 import '../styles/main.scss';
@@ -16,7 +16,6 @@ import '../styles/drag_n_drop.scss';
 class App extends Component {
     constructor(props) {
         super(props);
-        console.log('store:blocks', this.props);
 
         this.tempState = {draggables: [], grids: []};
     }
@@ -42,15 +41,15 @@ class App extends Component {
             return {area: elemRect.right - left, direction: index === 0 ? 'before' : 'after'}
         };
         return candidates
-            .map((item, index) => ({node: item, rect: item.getBoundingClientRect(), index} ))
+            .map((item, index) => ({node: item, rect: item.getBoundingClientRect(), index}))
             .map(({node, rect}) => {
                 if (node.classList.contains('draggable-preview'))
-                    return {node, rect: {...rect, left: rect.left - previewMargin, right: rect.right + previewMargin }};
+                    return {node, rect: {...rect, left: rect.left - previewMargin, right: rect.right + previewMargin}};
 
                 return {node, rect};
             })
             .filter(({rect: {left, right}}) => (
-                ( left < elemRect.left && right > elemRect.left ) || ( left < elemRect.right && right > elemRect.right ))
+                (left < elemRect.left && right > elemRect.left) || (left < elemRect.right && right > elemRect.right))
             )
             .map((item) => ({...item, ...getArea(item)}))
             .sort((a, b) => b.area - a.area);
@@ -95,10 +94,13 @@ class App extends Component {
     };
 
     dropElement(preview, elem) {
-        if (preview)
-            preview.parentNode.replaceChild(elem, preview);
-        else
-            elem.parentNode.removeChild(elem);
+        if (preview){
+            // preview.parentNode.replaceChild(elem, preview);
+            return true;
+        }
+        // if(elem.parentNode)
+            // elem.parentNode.removeChild(elem);
+        return false;
 
     }
 
@@ -112,10 +114,6 @@ class App extends Component {
 
         return outlined;
     }
-
-    // recalculateGrids(grids) {
-    //     return grids.map((grid) => ({...grid, rect: grid.node.getBoundingClientRect()}));
-    // }
 
     onDrag(elem, pos) {
         let {preview} = this.tempState;
@@ -142,11 +140,10 @@ class App extends Component {
         if (elem.parentNode.classList.contains('menu__tab-subsection')) {
             const copy = elem.cloneNode(true);
             elem.parentNode.replaceChild(copy, elem);
+            // console.log('copy', copy);
             this.initDraggable(copy);
-            console.log('copy')
+            document.body.appendChild(elem);
         }
-
-        document.body.appendChild(elem);
 
         elem.classList.add('draggable--moved');
         const {height, width} = elem.getBoundingClientRect();
@@ -156,17 +153,31 @@ class App extends Component {
     }
 
     dragEnd(elem) {
+        console.log('dragEnd', elem);
         const {outlinedDroppable} = this.tempState;
         if (outlinedDroppable) {
             const translate = /translate.*?\)/g;
             outlinedDroppable.node.classList.remove('droppable--outlined');
-            elem.parentNode.removeChild(elem);
-            console.log(elem.style.transform);
             elem.style.transform = elem.style.transform.replace(translate, '');
-            outlinedDroppable.node.appendChild(elem);
             this.tempState.outlinedDroppable = null;
         }
-        this.dropElement(this.tempState.preview, elem);
+        const {index, type} = elem.dataset;
+
+        const {preview} = this.tempState;
+        if(preview){
+            const parentIndex = preview.parentNode.dataset.index;
+            const nextIndex = preview.nextSibling? preview.nextSibling.dataset.index : null;
+
+            if(index)
+                this.props.moveBlock(index, parentIndex, nextIndex); // TODO add flex
+            else{
+                this.props.addBlock(type, parentIndex, nextIndex); // TODO add flex
+                elem.parentNode.removeChild(elem);
+            }
+            preview.parentNode.removeChild(preview);
+        } else if(index)
+            this.props.deleteBlock(index);
+
         this.tempState.preview = null;
         elem.style.top = 0;
         elem.style.left = 0;
@@ -178,9 +189,11 @@ class App extends Component {
     }
 
     initDraggable(elem) {
+        if(!elem) return;
+        console.log('initDraggable', elem);
         elem.classList.add('draggable');
-        this.tempState = {...this.tempState, draggables: [...this.tempState.draggables, elem]};
-        create(elem, {
+        // this.tempState = {...this.tempState, draggables: [...this.tempState.draggables, {node: elem}]};
+        return create(elem, {
             onDrag: ::this.onDrag,
             dragStart: ::this.dragStart,
             dragEnd: ::this.dragEnd,
@@ -189,28 +202,31 @@ class App extends Component {
     }
 
     initGrid(elem) {
+        if(!elem) return;
         const rect = elem.getBoundingClientRect();
         this.tempState = {...this.tempState, grids: [...this.tempState.grids, {node: elem, rect, level: 0}]};
-    }
-
-    componentDidMount() {
-        console.log(this.tempState, this.props.blocks, this.props.addBlock);
     }
 
     render() {
         return (
             <div>
                 <Menu initDraggable={::this.initDraggable}/>
-                <WorkArea blocks={this.props.blocks} initGrid={::this.initGrid}  initDraggable={::this.initDraggable}/>
+                <WorkArea blocks={this.props.blocks} initGrid={::this.initGrid} initDraggable={::this.initDraggable}/>
             </div>
         );
     }
 }
 
-const mapStateToProps = (state) =>{ console.log(state.blocks); return  {
-    blocks: [...state.blocks]
-}
+
+const mapStateToProps = (state) => {
+    console.log(state);
+    return{blocks: [...state.blocks]};
 };
 
+/*
+const mapStateToProps = (state) => ({
+    blocks: [...state.blocks]
+});
+*/
 
-export default connect(mapStateToProps)(App);
+export default connect(mapStateToProps, {addBlock, moveBlock, deleteBlock})(App);

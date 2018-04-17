@@ -10,7 +10,7 @@ import '../styles/Grid.scss';
 class Grid extends Component{
     render(){
         return (
-            <div className="grid" ref={this.props.initGrid}>
+            <div className="grid" data-index={this.props.index} ref={this.props.initGrid}>
                 {this.props.children}
             </div>
         );

@@ -9,22 +9,29 @@ import Block from '../components/Block';
 
 import '../styles/WorkArea.scss';
 
-class WorkArea extends Component{
-    getChildren(blocks){
-        return blocks.map((block, index) =>(
-            <Block key={index} data={block} initDraggable={::this.props.initDraggable}/>
-            )
+class WorkArea extends Component {
+    getChildren(blocks, parentIndex = '') {
+        const children = blocks.map((block, index) => {
+                const newIndex = `${parentIndex}${index}L`;
+                return <Block key={index} index={newIndex} data={block} initDraggable={::this.props.initDraggable}/>
+            }
         );
+        // console.log(children);
+        return children;
     }
-    getGrids(grids){
-        return grids.map((grid, index) => (
-            <Grid key={index} initGrid={::this.props.initGrid}>
-                {this.getChildren(grid.children)}
-            </Grid>
-            )
+
+    getGrids(grids, parentIndex = '') {
+        return grids.map((grid, index) => {
+                const newIndex = `${parentIndex}${index}L`;
+                return <Grid key={index} index={newIndex} initGrid={::this.props.initGrid}>
+                    {grid.children.length}
+                    {this.getChildren(grid.children, newIndex)}
+                </Grid>
+            }
         )
     }
-    render(){
+
+    render() {
         return (
             <main className="work-area">
                 {this.getGrids(this.props.blocks)}
