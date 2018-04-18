@@ -37,18 +37,20 @@ const editorState = (reducer) => {
 
         switch (action.type) {
             case 'UNDO': {
+                const lastPast = past[past.length - 1];
                 return {
                     ...state,
                     past: past.slice(0, past.length - 1),
-                    present: past[past.length - 1],
-                    future: [...future, present],
+                    present: lastPast || present,
+                    future: lastPast? [...future, present] : future,
                 };
             }
             case 'REDO': {
+                const lastFuture = future[future.length - 1];
                 return {
                     ...state,
-                    past: [...past, present],
-                    present: future[future.length - 1],
+                    past: lastFuture ? [...past, present] : past,
+                    present: lastFuture || present,
                     future: future.slice(0, past.length - 1),
                 }
             }

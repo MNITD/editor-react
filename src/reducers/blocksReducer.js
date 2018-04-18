@@ -9,7 +9,7 @@ const getNode = (state, path) => {
     let currentNode = state[path[0]];
     if(path > 1)
         path.slice(1).forEach((index) => {currentNode  = currentNode.children[index]});
-    return {...currentNode};
+    return currentNode;
     //TODO replace children of currentNode's parent with copy
 };
 
@@ -32,7 +32,7 @@ const blocks = (state=[], action) =>{
     console.log(state);
     switch (action.type){
         case 'ADD_BLOCK':{
-            const newState = [...state];
+            const newState = JSON.parse(JSON.stringify(state));///[...state];
             const {blockType,
                 parentIndex,
                 nextIndex} = action;
@@ -46,7 +46,7 @@ const blocks = (state=[], action) =>{
             return newState;
         }
         case 'MOVE_BLOCK':{
-            const newState = [...state];
+            const newState = JSON.parse(JSON.stringify(state)); // [...state];
             const {index,
                 parentIndex,
                 nextIndex} = action;
@@ -60,7 +60,7 @@ const blocks = (state=[], action) =>{
             return newState;
         }
         case 'DELETE_BLOCK':{
-            const newState = [...state];
+            const newState =  JSON.parse(JSON.stringify(state)); // [...state];
             const {index} = action;
             const nodePath = splitIndex(index);
             removeNode(newState, nodePath);
