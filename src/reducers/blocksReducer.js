@@ -1,32 +1,35 @@
 /**
  * Created by bogdan on 29.03.18.
  */
-import {combineReducers} from 'redux';
 
-const splitIndex = (index) => index.split('L').map(index => +index);
+const splitIndex = (index) => index.slice(0, -1).split('L').map(index => +index);
 
 const getNode = (state, path) => {
+    // TODO make deep copy with
     let currentNode = state[path[0]];
     if(path > 1)
         path.slice(1).forEach((index) => {currentNode  = currentNode.children[index]});
-    return currentNode;
+    return {...currentNode};
+    //TODO replace children of currentNode's parent with copy
 };
 
 const removeNode = (state, path) => {
-    let parentNode = getNode(state, path.slice(0, -2));
-    return parentNode.children.splice(path[path.length - 2], 1)[0];
+    let parentNode = getNode(state, path.slice(0, -1));
+    return parentNode.children.splice(path[path.length - 1], 1)[0];
 };
 
 const addNode = (state, parentPath, nextPath, node) =>{
+    console.log(parentPath);
     const parentNode = getNode(state, parentPath);
     if(nextPath)
-        parentNode.children.splice(nextPath[nextPath.length - 2], 0, node);
+        parentNode.children.splice(nextPath[nextPath.length - 1], 0, node);
     else
         parentNode.children.push(node);
 };
 
 
-const blocks = (state =[], action) =>{
+const blocks = (state=[], action) =>{
+    console.log(state);
     switch (action.type){
         case 'ADD_BLOCK':{
             const newState = [...state];
@@ -60,16 +63,12 @@ const blocks = (state =[], action) =>{
             const newState = [...state];
             const {index} = action;
             const nodePath = splitIndex(index);
-            removeNode(newState, nodePath)
+            removeNode(newState, nodePath);
             return newState;
         }
         default:
             return state;
     }
 };
-
-// const blocks = combineReducers({
-//     byId
-// });
 
 export default blocks;

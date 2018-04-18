@@ -220,13 +220,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
     console.log(state);
-    return{blocks: [...state.blocks]};
+    return{blocks: [...state.present.blocks]};
 };
-
-/*
-const mapStateToProps = (state) => ({
-    blocks: [...state.blocks]
-});
-*/
 
 export default connect(mapStateToProps, {addBlock, moveBlock, deleteBlock})(App);

@@ -3,11 +3,11 @@
  */
 import {combineReducers} from 'redux';
 import blocks from './blocksReducer';
-// import someOtherReducer from './someOtherReducer'
+import undoReducer from './undoReducer'
 
 const reducer = combineReducers({
     blocks,
     //someOtherReducer
 });
 
-export default reducer;
+export default undoReducer(reducer);

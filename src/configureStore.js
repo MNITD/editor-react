@@ -12,7 +12,9 @@ import {loadState, saveState} from './utils/localStorage';
 const configureStore = () => {
     const persistedState = loadState() || {
     // const persistedState = {
-        blocks: [
+        past: [],
+        present:{
+            blocks: [
             // {
             //     blockType: 'Grid',
             //     children: [
@@ -37,6 +39,8 @@ const configureStore = () => {
                 children: [],
             },
         ]
+        },
+        future:[],
     };
     // console.log(persistedState);
     const store = createStore(reducer, persistedState, middleware);
