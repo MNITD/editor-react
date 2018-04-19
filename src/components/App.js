@@ -34,11 +34,13 @@ class App extends Component {
     findNeighbours(elem, candidates) {
         const elemRect = elem.getBoundingClientRect();
         const previewMargin = 20;
-        const getArea = ({rect: {left, right}, index}) => {
+        const getArea = ({rect: {left, right, width}, index}) => {
+            const elemCenter = elemRect.left + elemRect.width / 2;
+            const center =  left + width / 2 ;
             if (left < elemRect.left)
-                return {area: right - elemRect.left, direction: index === candidates.length - 1 ? 'after' : 'before'};
+                return {area: right - elemRect.left, direction: elemCenter > center ? 'after' : 'before'};
 
-            return {area: elemRect.right - left, direction: index === 0 ? 'before' : 'after'}
+            return {area: elemRect.right - left, direction: elemCenter < center? 'before' : 'after'}
         };
         return candidates
             .map((item, index) => ({node: item, rect: item.getBoundingClientRect(), index}))

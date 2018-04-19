@@ -1,6 +1,7 @@
 .work-area{
   height: auto;
-  min-height: 100vh;
+  min-height: calc(100vh - 30px);
   margin-left: 60px; // TODO add css variable
+  padding: 15px;
   overflow: auto;
 }
