@@ -51,7 +51,7 @@ const editorState = (reducer) => {
                     ...state,
                     past: lastFuture ? [...past, present] : past,
                     present: lastFuture || present,
-                    future: future.slice(0, past.length - 1),
+                    future: future.slice(0, future.length - 1),
                 }
             }
             default: {

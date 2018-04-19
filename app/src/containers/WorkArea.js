@@ -24,7 +24,6 @@ class WorkArea extends Component {
         return grids.map((grid, index) => {
                 const newIndex = `${parentIndex}${index}L`;
                 return <Grid key={index} index={newIndex} initGrid={::this.props.initGrid}>
-                    {grid.children.length}
                     {this.getChildren(grid.children, newIndex)}
                 </Grid>
             }
