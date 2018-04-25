@@ -12,7 +12,6 @@
     "server:serve": "npm run server:build && node server/dist/index.js",
     "server:start": "nodemon server/src/index.js --exec babel-node",
     "server:start:trace-sync": "npm run server:start --trace-sync-io",
-    "start": "npm run dev",
     "schema": "get-graphql-schema http://localhost:8080/v1/graphql > schema.json -j"
   },
   "repository": {
@@ -81,7 +80,7 @@
     "uuid": "^3.2.1"
   },
   "nodemonConfig": {
-    "ignore": ["test/*", "docs/*", "server/public/*"],
+    "ignore": ["test/*", "docs/*", "server/public/*", "app"],
     "delay": "2500"
   },
   "eslintConfig": {

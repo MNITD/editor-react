@@ -5,11 +5,8 @@ import {fromEvent} from 'most';
 
 const mouseup = fromEvent('mouseup', document);
 const mousemove = fromEvent('mousemove', document);
-const draggables = [];
 
 const create = (draggable, {onDrag, dragStart, dragEnd, dragPredicate}) => {
-    draggables.push(draggable);
-    console.log(draggables.length);
     const mousedown = fromEvent('mousedown', draggable);
 
     const moveDraggable = (elem, {left, top}) => {

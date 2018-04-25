@@ -155,7 +155,7 @@ class App extends Component {
     }
 
     dragEnd(elem) {
-        console.log('dragEnd', elem);
+        console.log('dragEnd');
         const {outlinedDroppable} = this.tempState;
         if (outlinedDroppable) {
             const translate = /translate.*?\)/g;
@@ -176,7 +176,7 @@ class App extends Component {
                 this.props.addBlock(type, parentIndex, nextIndex); // TODO add flex
                 elem.parentNode.removeChild(elem);
             }
-            preview.parentNode.removeChild(preview);
+            preview.parentNode.removeChild(preview); // TODO  unsubscribe Block from drag
         } else if(index)
             this.props.deleteBlock(index);
 
@@ -221,7 +221,7 @@ class App extends Component {
 
 
 const mapStateToProps = (state) => {
-    console.log(state);
+    // console.log(state);
     return{blocks: [...state.present.blocks]};
 };
 
