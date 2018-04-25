@@ -6,6 +6,7 @@ import {Component} from 'react';
 import WorkArea from '../containers/WorkArea';
 import Menu from './Menu';
 import {create} from '../lib/drag';
+import * as resize from '../lib/resize';
 import {connect} from 'react-redux';
 import {addBlock, moveBlock, deleteBlock} from '../actions/blockActions';
 
@@ -17,7 +18,7 @@ class App extends Component {
     constructor(props) {
         super(props);
 
-        this.tempState = {draggables: [], grids: []};
+        this.tempState = {draggables: [], grids: [], enableDragging: true, enableResizing: true};
     }
 
     findDropCandidates(elem, droppables) {
@@ -187,7 +188,7 @@ class App extends Component {
     }
 
     dragPredicate() {
-        return true;
+        return this.tempState.enableDragging;
     }
 
     initDraggable(elem) {
@@ -195,6 +196,14 @@ class App extends Component {
         console.log('initDraggable', elem);
         elem.classList.add('draggable');
         // this.tempState = {...this.tempState, draggables: [...this.tempState.draggables, {node: elem}]};
+        resize.create(elem, {
+            ready: (state) =>{this.tempState.enableDragging = !state;},
+            onResize:(elem)=>{console.log('onResize')},
+            resizePredicate: () => {return true},
+            resizeStart: () => {console.log('resizeStart');},
+            resizeEnd: () => {console.log('resizeEnd');},
+        });
+
         return create(elem, {
             onDrag: ::this.onDrag,
             dragStart: ::this.dragStart,

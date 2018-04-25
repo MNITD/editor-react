@@ -18,7 +18,8 @@ const create = (draggable, {onDrag, dragStart, dragEnd, dragPredicate}) => {
     };
 
     const dragging = mousedown
-        .takeWhile(dragPredicate)
+        .filter(dragPredicate)
+        // .takeWhile(dragPredicate)
         .tap(() => console.log(window.scrollX, window.scrollY))
         .map(({clientX, clientY}) => [clientX, clientY])
         .chain(([startX, startY]) => {
