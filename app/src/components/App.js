@@ -168,8 +168,8 @@ class App extends Component {
         const {preview} = this.tempState;
         if(preview){
             const parentIndex = preview.parentNode.dataset.index;
-            const nextIndex = preview.nextSibling? preview.nextSibling.dataset.index : null;
-
+            let nextIndex = preview.nextSibling? preview.nextSibling.dataset.index : null;
+            if(index === nextIndex) nextIndex = null;
             if(index)
                 this.props.moveBlock(index, parentIndex, nextIndex); // TODO add flex
             else{

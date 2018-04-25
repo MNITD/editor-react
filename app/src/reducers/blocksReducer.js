@@ -19,10 +19,9 @@ const removeNode = (state, path) => {
 };
 
 const addNode = (state, parentPath, nextPath, node) =>{
-    console.log(parentPath);
     const parentNode = getNode(state, parentPath);
     if(nextPath)
-        parentNode.children.splice(nextPath[nextPath.length - 1], 0, node);
+        parentNode.children.splice(nextPath[nextPath.length - 1] - 1, 0, node);
     else
         parentNode.children.push(node);
 };

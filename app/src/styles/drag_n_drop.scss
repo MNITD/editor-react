@@ -7,13 +7,18 @@
   }
 
   &-preview{
-    width: 100%;
-    background-color: #dde3ea;
-    border:1px solid  #d0d3d6;
-    border-radius: 20px;
-    box-sizing: border-box;
-    margin: 20px;
+    position: relative;
     flex:1;
+    &:after{
+      width: calc(100% - 40px);
+      height: 100%;
+      content: '';
+      margin: 20px;
+      background-color: #dde3ea;
+      border:1px solid  #d0d3d6;
+      border-radius: 20px;
+      position: absolute;
+    }
   }
 
 }

@@ -59,10 +59,10 @@ const editorState = (reducer) => {
 
                 const newPresent = reducer(present, action);
                 if (newPresent === present){
-                    console.log('same');
+                    // console.log('same');
                     return state;
                 }else {
-                    console.log('different', present);
+                    // console.log('different', present);
                     return {
                         ...state,
                         past: [...past, {...present}],
