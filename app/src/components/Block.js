@@ -16,9 +16,9 @@ class Block extends Component{
     }
 
     render(){
-        const {index, data:{blockType, flex}} = this.props;
+        const {index, data:{blockType, col}} = this.props;
         return (
-            <div className={`block block--flex-${flex}`} data-index={index} data-type={blockType} ref={this.setRef}>
+            <div className={`block block--col-${col}`} data-index={index} data-type={blockType} ref={this.setRef}>
                 {blockType}
             </div>
         );

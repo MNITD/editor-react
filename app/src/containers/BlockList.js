@@ -16,15 +16,15 @@ class BlockList extends Component {
                 {
                     name: 'Primary',
                     items: [
-                        {blockType: 'Text', flex: 12},
-                        {blockType: 'Regular', flex: 12},
+                        {blockType: 'Text', col: 6},
+                        {blockType: 'Regular', col: 6},
                     ]
                 },
                 {
                     name: 'Secondary',
                     items: [
-                        {blockType: 'Text', flex: 12},
-                        {blockType: 'Regular', flex: 12},
+                        {blockType: 'Text', col: 6},
+                        {blockType: 'Regular', col: 6},
                     ]
                 },
             ]

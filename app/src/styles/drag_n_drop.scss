@@ -2,13 +2,13 @@
   &--moved{
     position: absolute;
     max-height: 34px;
+    max-width: 20px;
     box-sizing: border-box;
     z-index: 10;
   }
 
   &-preview{
     position: relative;
-    flex:1;
     &:after{
       width: calc(100% - 40px);
       height: 100%;

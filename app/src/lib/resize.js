@@ -14,7 +14,7 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
     };
 
     const resizing = mousemove
-        // .takeWhile(resizePredicate)
+    // .takeWhile(resizePredicate)
         .filter(resizePredicate)
         .tap(() => {
             resizable.style.cursor = 'initial';
@@ -27,8 +27,9 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
         })
         .concatMap(() => {
             return mousedown
+                .filter(resizePredicate)
                 .filter(filterCursor)
-                .takeWhile(resizePredicate)
+                // .takeWhile(resizePredicate)
                 .chain(() => {
                     return mousemove
                         .take(1)
@@ -37,13 +38,23 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
                         .tap(mm => mm.preventDefault()) // prevent text selecting
                         .until(mouseup.tap((pos) => {
                             resizeEnd(resizable, pos)
-                        }));
-                });
+                        }))
+                        .filter(filterCursor)
+                        .scan(({x, y}, {clientX, clientY}) => {
+                            const {left, width} = resizable.getBoundingClientRect();
+                            const side = clientX <= left + width / 2 ? 'left' : 'right';
+                            if (x && clientX < x) return {direction: -1, x: clientX, y: clientY, side};
+                            if (x && clientX > x) return {direction: 1, x: clientX, y: clientY, side};
+                            return {direction: 0, x: clientX, y: clientY, side}
+                        }, {}) //{x: 0, y: 0, direction: 0}
+                })
+
         });
 
     return resizing
         .subscribe({
             next(pos) {
+                console.log(pos);
                 onResize(resizable, pos)
             }
         })

@@ -38,7 +38,7 @@ const blocks = (state=[], action) =>{
 
             const parentPath = splitIndex(parentIndex);
             const nextPath =  nextIndex? splitIndex(nextIndex) : null;
-            const newBlock = {blockType, flex: 12, children: []};
+            const newBlock = {blockType, col: 6, children: []};
 
             addNode(newState, parentPath, nextPath, newBlock);
 
