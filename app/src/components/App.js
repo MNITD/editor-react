@@ -58,30 +58,31 @@ class App extends Component {
             .sort((a, b) => b.area - a.area);
     };
 
-    createPreview({rect: {height}}, elem) {
+    createPreview({rect: {height}}, elem, node) {
         const previewPadding = 44;
         let preview = document.createElement('div');
         preview.classList.add('draggable-preview');
-        if(elem){
-            const elemColEnd = elem.className.indexOf('--col-') + 6;
-            const elemCol = parseInt(elem.className.substr(elemColEnd, 2), 10);
-            preview.classList.add(`block--col-${elemCol}`);
+        if(node){
+            const totalColNum = 12;
+            const divisor =  node.parentNode.children.length;
+            const colNum = Math.round(totalColNum / (node.parentNode === elem.parentNode? divisor: divisor + 1));
+            preview.classList.add(`block--col-${colNum}`);
         } else
-            preview.style.flex = '1';
+            preview.classList.add(`block--col-12`);
 
 
         preview.style.height = height - previewPadding + 'px';
         return preview;
     }
 
-    updatePreview(oldPreview, dropCandidate, {node, direction}) {
+    updatePreview(oldPreview, dropCandidate, elem, {node, direction}) {
         let preview = oldPreview;
         if (dropCandidate) {
             if (preview) {
                 if (preview === node) return preview;
                 preview.parentNode.removeChild(preview);
             }
-            preview = this.createPreview(dropCandidate, node);
+            preview = this.createPreview(dropCandidate, elem,  node);
             const insertAfter = (preview, {parentNode, nextSibling}) => {
                 if (nextSibling)
                     parentNode.insertBefore(preview, nextSibling);
@@ -104,17 +105,6 @@ class App extends Component {
         return preview;
     };
 
-    dropElement(preview, elem) {
-        if (preview) {
-            // preview.parentNode.replaceChild(elem, preview);
-            return true;
-        }
-        // if(elem.parentNode)
-        // elem.parentNode.removeChild(elem);
-        return false;
-
-    }
-
     outlineDroppable(dropCandidate, oldOutlined) {
         let outlined = oldOutlined;
         if (dropCandidate) {
@@ -134,9 +124,9 @@ class App extends Component {
         if (dropCandidate) {
             const [neighbour] = this.findNeighbours(elem, [...dropCandidate.node.children]);
             if (neighbour)
-                preview = this.updatePreview(preview, dropCandidate, neighbour);
+                preview = this.updatePreview(preview, dropCandidate, elem, neighbour);
             else
-                preview = this.updatePreview(preview, dropCandidate, {});
+                preview = this.updatePreview(preview, dropCandidate, elem, {});
 
         } else if (preview) {
             preview.parentNode.removeChild(preview);
@@ -178,11 +168,14 @@ class App extends Component {
         if (preview) {
             const parentIndex = preview.parentNode.dataset.index;
             let nextIndex = preview.nextSibling ? preview.nextSibling.dataset.index : null;
-            if (index === nextIndex) nextIndex = null;
+            if (index === nextIndex) nextIndex = null; //????
+
+            const previewColEnd = preview.className.indexOf('--col-') + 6;
+            const previewCol = parseInt(preview.className.substr(previewColEnd, 2), 10);
             if (index)
-                this.props.moveBlock(index, parentIndex, nextIndex); // TODO add flex
+                this.props.moveBlock(index, parentIndex, nextIndex, previewCol);
             else {
-                this.props.addBlock(type, parentIndex, nextIndex); // TODO add flex
+                this.props.addBlock(type, parentIndex, nextIndex, previewCol);
                 elem.parentNode.removeChild(elem);
             }
             preview.parentNode.removeChild(preview); // TODO  unsubscribe Block from drag
@@ -260,7 +253,7 @@ class App extends Component {
 
     initDraggable(elem) {
         if (!elem) return;
-        console.log('initDraggable', elem);
+        // console.log('initDraggable', elem);
         elem.classList.add('draggable');
         // this.tempState = {...this.tempState, draggables: [...this.tempState.draggables, {node: elem}]};
         resize.create(elem, {

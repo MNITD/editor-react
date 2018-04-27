@@ -34,11 +34,12 @@ const blocks = (state=[], action) =>{
             const newState = JSON.parse(JSON.stringify(state));///[...state];
             const {blockType,
                 parentIndex,
-                nextIndex} = action;
+                nextIndex,
+                col} = action;
 
             const parentPath = splitIndex(parentIndex);
             const nextPath =  nextIndex? splitIndex(nextIndex) : null;
-            const newBlock = {blockType, col: 6, children: []};
+            const newBlock = {blockType, col, children: []};
 
             addNode(newState, parentPath, nextPath, newBlock);
 
@@ -48,11 +49,13 @@ const blocks = (state=[], action) =>{
             const newState = JSON.parse(JSON.stringify(state)); // [...state];
             const {index,
                 parentIndex,
-                nextIndex} = action;
+                nextIndex,
+                col} = action;
             const parentPath = splitIndex(parentIndex);
             const nodePath = splitIndex(index);
             const nextPath =  nextIndex? splitIndex(nextIndex) : null;
             const node = removeNode(newState, nodePath);
+            node.col = col;
 
             addNode(newState, parentPath, nextPath, node);
 
