@@ -59,44 +59,78 @@ class App extends Component {
     };
 
     createPreview({rect: {height}, node}, elem) {
-        const previewPadding = 44;
+        const previewPadding = 20;
         let preview = document.createElement('div');
         preview.classList.add('draggable-preview');
-        console.log('createPreview: node', node);
-        const totalColNum = 12;
-        const divisor =  node.children.length;
-        const colNum = Math.round(totalColNum / (node === elem.parentNode? divisor: divisor + 1));
-        preview.classList.add(`block--col-${colNum}`);
+
+        // preview.classList.add(`block--col-${colNum}`);
         preview.style.height = height - previewPadding + 'px';
         return preview;
+    }
+
+    calulateColNum({node}, elem){
+        const totalColNum = 12;
+        const divisor =  node.children.length;
+       return Math.round(totalColNum / (node === elem.parentNode? divisor: divisor + 1));
     }
 
     updatePreview(oldPreview, dropCandidate, elem, {node, direction}) {
         let preview = oldPreview;
         if (dropCandidate) {
             if (preview) {
-                if (preview === node) return preview;
-                preview.parentNode.removeChild(preview);
+                if (preview.node === node) return preview;
+                preview.node.parentNode.removeChild(preview.node);
             }
-            preview = this.createPreview(dropCandidate, elem);
-            const insertAfter = (preview, {parentNode, nextSibling}) => {
-                if (nextSibling)
-                    parentNode.insertBefore(preview, nextSibling);
-                else
-                    parentNode.appendChild(preview);
-            };
+            preview = {};
+            preview.node = this.createPreview(dropCandidate, elem);
+            preview.parentIndex = dropCandidate.node.dataset.index;
+            preview.colNum =  this.calulateColNum(dropCandidate, elem);
+
+            // const insertAfter = (preview, {parentNode, nextSibling}) => {
+            //     if (nextSibling)
+            //         parentNode.insertBefore(preview, nextSibling);
+            //     else
+            //         parentNode.appendChild(preview);
+            // };
             const parentNode = dropCandidate.node;
+            const previewOffset = 8;
+
             switch (direction) {
-                case 'before':
-                    parentNode.insertBefore(preview, node);
-                    break;
+                case 'before':{
+                    const nodeRect = node.getBoundingClientRect();
+                    preview.node.style.left = nodeRect.left - previewOffset +  'px';
+                    preview.node.style.top = nodeRect.top + 'px';
+                    preview.node.nextIndex = node.dataset.index;
+                    // parentNode.insertBefore(preview, node);
+                    break;}
                 case 'after':
-                    insertAfter(preview, node);
+                    const nodeRect = node.getBoundingClientRect();
+                    preview.node.style.left = nodeRect.right - previewOffset + 'px';
+                    preview.node.style.top = nodeRect.top + 'px';
+                    preview.node.nextIndex = node.nextSibling? node.nextSibling.dataset.index : null;
+                    // insertAfter(preview, node);
                     break;
-                default:
-                    parentNode.appendChild(preview);
+                default:{
+                    const parentRect = parentNode.getBoundingClientRect();
+                    preview.node.style.left = parentRect.left - previewOffset + 'px';
+                    if(parentNode.children.length !== 0){
+                        const child = [...parentNode.children]
+                            .slice(-2)
+                            .reverse()
+                            .find(
+                            (child) => child !== elem
+                        );
+                        if(child) preview.node.style.left = child.getBoundingClientRect().right - previewOffset + 'px';
+                    }
+
+                    preview.node.style.top = parentRect.top + 'px';
+                    preview.node.nextIndex = null;
+                    // parentNode.appendChild(preview);
                     break;
+                }
+
             }
+            document.body.appendChild(preview.node);
         }
         return preview;
     };
@@ -113,7 +147,7 @@ class App extends Component {
     }
 
     dragStart(elem, {clientX, clientY}) {
-
+        console.log(elem.parentNode.children.length);
         if (elem.parentNode.classList.contains('menu__tab-subsection')) {
             const copy = elem.cloneNode(true);
             elem.parentNode.replaceChild(copy, elem);
@@ -142,7 +176,7 @@ class App extends Component {
                 preview = this.updatePreview(preview, dropCandidate, elem, {});
 
         } else if (preview) {
-            preview.parentNode.removeChild(preview);
+            preview.node.parentNode.removeChild(preview.node);
             preview = null;
         }
         this.tempState.preview = preview;
@@ -162,12 +196,14 @@ class App extends Component {
 
         const {preview} = this.tempState;
         if (preview) {
-            const parentIndex = preview.parentNode.dataset.index;
-            let nextIndex = preview.nextSibling ? preview.nextSibling.dataset.index : null;
-            if (index === nextIndex) nextIndex = null; //????
+            const parentIndex = preview.parentIndex;//preview.node.parentNode.dataset.index;
+            // let nextIndex = preview.nextSibling ? preview.nextSibling.dataset.index : null;
+            // if (index === nextIndex) nextIndex = null; //????
+            const nextIndex = preview.nextIndex;
 
-            const previewColEnd = preview.className.indexOf('--col-') + 6;
-            const previewCol = parseInt(preview.className.substr(previewColEnd, 2), 10);
+            // const previewColEnd = preview.className.indexOf('--col-') + 6;
+            // const previewCol = parseInt(preview.className.substr(previewColEnd, 2), 10);
+            const previewCol  = preview.colNum;
 
             if (index)
                 this.props.moveBlock(index, parentIndex, nextIndex, previewCol);
@@ -175,7 +211,7 @@ class App extends Component {
                 this.props.addBlock(type, parentIndex, nextIndex, previewCol);
                 elem.parentNode.removeChild(elem);
             }
-            preview.parentNode.removeChild(preview); // TODO  unsubscribe Block from drag
+            preview.node.parentNode.removeChild(preview.node); // TODO  unsubscribe Block from drag
         } else if (index)
             this.props.deleteBlock(index);
 
@@ -250,7 +286,8 @@ class App extends Component {
 
     initDraggable(elem) {
         if (!elem) return;
-        // console.log('initDraggable', elem);
+        console.log('initDraggable');
+
         elem.classList.add('draggable');
         // this.tempState = {...this.tempState, draggables: [...this.tempState.draggables, {node: elem}]};
         resize.create(elem, {

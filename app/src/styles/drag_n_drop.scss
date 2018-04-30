@@ -1,5 +1,5 @@
-.draggable{
-  &--moved{
+.draggable {
+  &--moved {
     position: absolute;
     max-height: 34px;
     max-width: 20px;
@@ -7,23 +7,21 @@
     z-index: 10;
   }
 
-  &-preview{
-    position: relative;
-    &:after{
-      width: calc(100% - 40px);
-      height: 100%;
-      content: '';
-      margin: 20px;
-      background-color: #dde3ea;
-      border:1px solid  #d0d3d6;
-      border-radius: 20px;
-      position: absolute;
-    }
+  &-preview {
+    position: absolute;
+    width: 16px;
+    height: 100%;
+    background-color:deepskyblue;
+    border: 1px solid #0092ce;
+    border-radius: 16px;
+    opacity: 0.4;
+    margin: 10px 0;
   }
 
 }
-.droppable{
-  &--outlined{
+
+.droppable {
+  &--outlined {
     border: 2px solid deepskyblue;
   }
 }

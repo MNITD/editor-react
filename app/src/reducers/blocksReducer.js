@@ -48,6 +48,7 @@ const blocks = (state=[], action) =>{
                 nextIndex,
                 col} = action;
 
+            console.log(parentIndex, nextIndex);
             const parentPath = splitIndex(parentIndex);
             const nextPath =  nextIndex? splitIndex(nextIndex) : null;
             const newBlock = {blockType, col, children: []};
