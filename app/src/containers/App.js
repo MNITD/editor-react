@@ -3,8 +3,8 @@
  */
 import React from 'react';
 import {Component} from 'react';
-import WorkArea from '../containers/WorkArea';
-import Menu from './Menu';
+import WorkArea from './WorkArea';
+import Menu from '../components/Menu';
 import {create} from '../lib/drag';
 import * as resize from '../lib/resize';
 import {connect} from 'react-redux';
@@ -58,19 +58,15 @@ class App extends Component {
             .sort((a, b) => b.area - a.area);
     };
 
-    createPreview({rect: {height}}, elem, node) {
+    createPreview({rect: {height}, node}, elem) {
         const previewPadding = 44;
         let preview = document.createElement('div');
         preview.classList.add('draggable-preview');
-        if(node){
-            const totalColNum = 12;
-            const divisor =  node.parentNode.children.length;
-            const colNum = Math.round(totalColNum / (node.parentNode === elem.parentNode? divisor: divisor + 1));
-            preview.classList.add(`block--col-${colNum}`);
-        } else
-            preview.classList.add(`block--col-12`);
-
-
+        console.log('createPreview: node', node);
+        const totalColNum = 12;
+        const divisor =  node.children.length;
+        const colNum = Math.round(totalColNum / (node === elem.parentNode? divisor: divisor + 1));
+        preview.classList.add(`block--col-${colNum}`);
         preview.style.height = height - previewPadding + 'px';
         return preview;
     }
@@ -82,7 +78,7 @@ class App extends Component {
                 if (preview === node) return preview;
                 preview.parentNode.removeChild(preview);
             }
-            preview = this.createPreview(dropCandidate, elem,  node);
+            preview = this.createPreview(dropCandidate, elem);
             const insertAfter = (preview, {parentNode, nextSibling}) => {
                 if (nextSibling)
                     parentNode.insertBefore(preview, nextSibling);
@@ -116,6 +112,23 @@ class App extends Component {
         return outlined;
     }
 
+    dragStart(elem, {clientX, clientY}) {
+
+        if (elem.parentNode.classList.contains('menu__tab-subsection')) {
+            const copy = elem.cloneNode(true);
+            elem.parentNode.replaceChild(copy, elem);
+            // console.log('copy', copy);
+            this.initDraggable(copy);
+            document.body.appendChild(elem);
+        }
+
+        elem.classList.add('draggable--moved');
+        const {height, width} = elem.getBoundingClientRect();
+        elem.style.top = `${clientY - height / 2 + window.scrollY}px`;
+        elem.style.left = `${clientX - width / 2 + window.scrollX}px`;
+        console.log(elem.style.left, elem.style.top);
+    }
+
     onDrag(elem, pos) {
         let {preview} = this.tempState;
         const {grids, outlinedDroppable} = this.tempState;
@@ -134,23 +147,6 @@ class App extends Component {
         }
         this.tempState.preview = preview;
         this.tempState.outlinedDroppable = this.outlineDroppable(dropCandidate, outlinedDroppable);
-    }
-
-    dragStart(elem, {clientX, clientY}) {
-
-        if (elem.parentNode.classList.contains('menu__tab-subsection')) {
-            const copy = elem.cloneNode(true);
-            elem.parentNode.replaceChild(copy, elem);
-            // console.log('copy', copy);
-            this.initDraggable(copy);
-            document.body.appendChild(elem);
-        }
-
-        elem.classList.add('draggable--moved');
-        const {height, width} = elem.getBoundingClientRect();
-        elem.style.top = `${clientY - height / 2 + window.scrollY}px`;
-        elem.style.left = `${clientX - width / 2 + window.scrollX}px`;
-        console.log(elem.style.left, elem.style.top);
     }
 
     dragEnd(elem) {
@@ -172,6 +168,7 @@ class App extends Component {
 
             const previewColEnd = preview.className.indexOf('--col-') + 6;
             const previewCol = parseInt(preview.className.substr(previewColEnd, 2), 10);
+
             if (index)
                 this.props.moveBlock(index, parentIndex, nextIndex, previewCol);
             else {

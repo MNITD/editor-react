@@ -13,19 +13,30 @@ const getNode = (state, path) => {
     //TODO replace children of currentNode's parent with copy
 };
 
+const resize = (state, parentPath, node, inserting = true) => {
+    const parentNode = getNode(state, parentPath);
+    if(parentNode.children.length === 0) return;
+    const inc = (inserting? (-1) : 1) * (node.col / parentNode.children.length);
+    console.log(' parentNode.children.length',  parentNode.children.length, 'node.col',node.col, 'inc', inc);
+    parentNode.children = parentNode.children.map(child => ({...child, col: child.col + inc}));
+};
+
 const removeNode = (state, path) => {
-    let parentNode = getNode(state, path.slice(0, -1));
-    return parentNode.children.splice(path[path.length - 1], 1)[0];
+    const parentPath = path.slice(0, -1);
+    const parentNode = getNode(state, parentPath);
+    const node =  parentNode.children.splice(path[path.length - 1], 1)[0];
+    resize(state, parentPath, node, false);
+    return node;
 };
 
 const addNode = (state, parentPath, nextPath, node) =>{
+    resize(state, parentPath, node);
     const parentNode = getNode(state, parentPath);
     if(nextPath)
         parentNode.children.splice(nextPath[nextPath.length - 1] - 1, 0, node);
     else
         parentNode.children.push(node);
 };
-
 
 const blocks = (state=[], action) =>{
     console.log(state);
