@@ -68,10 +68,10 @@ class App extends Component {
         return preview;
     }
 
-    calulateColNum({node}, elem){
+    calulateColNum({node}, elem) {
         const totalColNum = 12;
-        const divisor =  node.children.length;
-       return Math.round(totalColNum / (node === elem.parentNode? divisor: divisor + 1));
+        const divisor = node.children.length;
+        return Math.round(totalColNum / (node === elem.parentNode ? divisor : divisor + 1));
     }
 
     updatePreview(oldPreview, dropCandidate, elem, {node, direction}) {
@@ -84,47 +84,42 @@ class App extends Component {
             preview = {};
             preview.node = this.createPreview(dropCandidate, elem);
             preview.parentIndex = dropCandidate.node.dataset.index;
-            preview.colNum =  this.calulateColNum(dropCandidate, elem);
+            preview.colNum = this.calulateColNum(dropCandidate, elem);
 
-            // const insertAfter = (preview, {parentNode, nextSibling}) => {
-            //     if (nextSibling)
-            //         parentNode.insertBefore(preview, nextSibling);
-            //     else
-            //         parentNode.appendChild(preview);
-            // };
             const parentNode = dropCandidate.node;
             const previewOffset = 8;
 
             switch (direction) {
-                case 'before':{
+                case 'before': {
                     const nodeRect = node.getBoundingClientRect();
-                    preview.node.style.left = nodeRect.left - previewOffset +  'px';
+                    preview.node.style.left = nodeRect.left - previewOffset + 'px';
                     preview.node.style.top = nodeRect.top + 'px';
-                    preview.node.nextIndex = node.dataset.index;
+                    preview.nextIndex = node.dataset.index;
                     // parentNode.insertBefore(preview, node);
-                    break;}
+                    break;
+                }
                 case 'after':
                     const nodeRect = node.getBoundingClientRect();
                     preview.node.style.left = nodeRect.right - previewOffset + 'px';
                     preview.node.style.top = nodeRect.top + 'px';
-                    preview.node.nextIndex = node.nextSibling? node.nextSibling.dataset.index : null;
+                    preview.nextIndex = node.nextSibling ? node.nextSibling.dataset.index : null;
                     // insertAfter(preview, node);
                     break;
-                default:{
+                default: {
                     const parentRect = parentNode.getBoundingClientRect();
                     preview.node.style.left = parentRect.left - previewOffset + 'px';
-                    if(parentNode.children.length !== 0){
+                    if (parentNode.children.length !== 0) {
                         const child = [...parentNode.children]
                             .slice(-2)
                             .reverse()
                             .find(
-                            (child) => child !== elem
-                        );
-                        if(child) preview.node.style.left = child.getBoundingClientRect().right - previewOffset + 'px';
+                                (child) => child !== elem
+                            );
+                        if (child) preview.node.style.left = child.getBoundingClientRect().right - previewOffset + 'px';
                     }
 
                     preview.node.style.top = parentRect.top + 'px';
-                    preview.node.nextIndex = null;
+                    preview.nextIndex = null;
                     // parentNode.appendChild(preview);
                     break;
                 }
@@ -160,7 +155,6 @@ class App extends Component {
         const {height, width} = elem.getBoundingClientRect();
         elem.style.top = `${clientY - height / 2 + window.scrollY}px`;
         elem.style.left = `${clientX - width / 2 + window.scrollX}px`;
-        console.log(elem.style.left, elem.style.top);
     }
 
     onDrag(elem, pos) {
@@ -196,14 +190,9 @@ class App extends Component {
 
         const {preview} = this.tempState;
         if (preview) {
-            const parentIndex = preview.parentIndex;//preview.node.parentNode.dataset.index;
-            // let nextIndex = preview.nextSibling ? preview.nextSibling.dataset.index : null;
-            // if (index === nextIndex) nextIndex = null; //????
+            const parentIndex = preview.parentIndex;
             const nextIndex = preview.nextIndex;
-
-            // const previewColEnd = preview.className.indexOf('--col-') + 6;
-            // const previewCol = parseInt(preview.className.substr(previewColEnd, 2), 10);
-            const previewCol  = preview.colNum;
+            const previewCol = preview.colNum;
 
             if (index)
                 this.props.moveBlock(index, parentIndex, nextIndex, previewCol);
@@ -225,59 +214,83 @@ class App extends Component {
         return this.tempState.enableDragging;
     }
 
-    ready(state) {
+    resizeReady(state) {
         this.tempState.enableDragging = !state;
     }
 
-    onResize(elem, {direction, side}) {
+    resizeStart() {
+        console.log('resizeStart')
+    }
+
+    onResize(elem, {direction, side, x}) {
         const {index} = elem.dataset;
         const siblingNum = elem.parentNode.children.length - 1;
 
-        if(direction === 0) return;
+        if (direction === 0) return;
 
-        if(side === 'left'){
-            if(+index.slice(-2)[0] === 0 && direction === -1) return; // if resize direction left and element first
-
-            const elemColEnd = elem.className.indexOf('--col-') + 6;
-            const elemCol = parseInt(elem.className.substr(elemColEnd, 2), 10);
-            if(elemCol === 12 - siblingNum && direction === -1) return;
-            if(elemCol === 1 && direction === 1) return;
-            elem.classList.remove(`block--col-${elemCol}`);
-            elem.classList.add(`block--col-${elemCol - direction}`);
-
-            const neighbour = elem.previousSibling;
-
-            if(neighbour){
-                const neighbourColEnd = neighbour.className.indexOf('--col-') + 6;
-                const neighbourCol = parseInt(neighbour.className.substr(neighbourColEnd, 2), 10);
-                console.log('neighbourCol', neighbourCol);
-                if(neighbourCol === 1 && direction === -1) return;
-                neighbour.classList.remove(`block--col-${neighbourCol}`);
-                neighbour.classList.add(`block--col-${neighbourCol + direction}`);
-            }
-        }
-
-        if(side === 'right'){
-            if(+index.slice(-2)[0] === elem.parentNode.children.length - 1  && direction === 1) return; // if resize direction right and element last
+        if (side === 'left') {
+            if (+index.slice(-2)[0] === 0) return; // if element first and side left
 
             const elemColEnd = elem.className.indexOf('--col-') + 6;
             const elemCol = parseInt(elem.className.substr(elemColEnd, 2), 10);
-            if(elemCol === 12 - siblingNum && direction === 1) return;
-            if(elemCol === 1 && direction === -1) return;
-            elem.classList.remove(`block--col-${elemCol}`);
-            elem.classList.add(`block--col-${elemCol + direction}`);
+            if (elemCol === 12 - siblingNum && direction === -1) return;
+            if (elemCol === 1 && direction === 1) return;
 
-            const neighbour = elem.nextSibling;
+            const elemRect = elem.getBoundingClientRect();
+            const colWidth = elemRect.width / elemCol;
+            const dif = x - elemRect.left - (direction * colWidth);
+            console.log('x', x, 'left', elemRect.left, 'width', colWidth, 'dif', dif);
+            if (Math.abs(dif) <= 5) {
+                elem.classList.remove(`block--col-${elemCol}`);
+                elem.classList.add(`block--col-${elemCol - direction}`);
 
-            if(neighbour){
-                const neighbourColEnd = neighbour.className.indexOf('--col-') + 6;
-                const neighbourCol = parseInt(neighbour.className.substr(neighbourColEnd, 2), 10);
-                if(neighbourCol === 1 && direction === 1) return;
-                neighbour.classList.remove(`block--col-${neighbourCol}`);
-                neighbour.classList.add(`block--col-${neighbourCol - direction}`);
+                const neighbour = elem.previousSibling;
+
+                if (neighbour) {
+                    const neighbourColEnd = neighbour.className.indexOf('--col-') + 6;
+                    const neighbourCol = parseInt(neighbour.className.substr(neighbourColEnd, 2), 10);
+                    console.log('neighbourCol', neighbourCol);
+                    if (neighbourCol === 1 && direction === -1) return;
+                    neighbour.classList.remove(`block--col-${neighbourCol}`);
+                    neighbour.classList.add(`block--col-${neighbourCol + direction}`);
+                }
+            }
+
+
+        }
+
+        if (side === 'right') {
+            if (+index.slice(-2)[0] === elem.parentNode.children.length - 1) return; // if element last and side right
+
+            const elemColEnd = elem.className.indexOf('--col-') + 6;
+            const elemCol = parseInt(elem.className.substr(elemColEnd, 2), 10);
+            if (elemCol === 12 - siblingNum && direction === 1) return;
+            if (elemCol === 1 && direction === -1) return;
+
+            const elemRect = elem.getBoundingClientRect();
+            const colWidth = elemRect.width / elemCol;
+            const dif = x - elemRect.right - (direction * colWidth);
+            console.log('x', x, 'left', elemRect.right, 'width', colWidth, 'dif', dif);
+            if (Math.abs(dif) <= 5) {
+                elem.classList.remove(`block--col-${elemCol}`);
+                elem.classList.add(`block--col-${elemCol + direction}`);
+
+                const neighbour = elem.nextSibling;
+
+                if (neighbour) {
+                    const neighbourColEnd = neighbour.className.indexOf('--col-') + 6;
+                    const neighbourCol = parseInt(neighbour.className.substr(neighbourColEnd, 2), 10);
+                    if (neighbourCol === 1 && direction === 1) return;
+                    neighbour.classList.remove(`block--col-${neighbourCol}`);
+                    neighbour.classList.add(`block--col-${neighbourCol - direction}`);
+                }
             }
         }
 
+    }
+
+    resizeEnd() {
+        console.log('resizeEnd');
     }
 
     resizePredicate() {
@@ -291,15 +304,11 @@ class App extends Component {
         elem.classList.add('draggable');
         // this.tempState = {...this.tempState, draggables: [...this.tempState.draggables, {node: elem}]};
         resize.create(elem, {
-            ready: ::this.ready,
+            resizeReady: ::this.resizeReady,
             onResize: ::this.onResize,
             resizePredicate: ::this.resizePredicate,
-            resizeStart: () => {
-                console.log('resizeStart');
-            },
-            resizeEnd: () => {
-                console.log('resizeEnd');
-            },
+            resizeStart: this.resizeStart,
+            resizeEnd: this.resizeEnd,
         });
 
         return create(elem, {
@@ -325,7 +334,6 @@ class App extends Component {
         );
     }
 }
-
 
 const mapStateToProps = (state) => {
     // console.log(state);

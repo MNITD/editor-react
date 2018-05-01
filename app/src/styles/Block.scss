@@ -15,6 +15,7 @@
   border: none;
   display: block;
   box-shadow: inset 5px 0 0 0 yellow;
+  transition: width 0.3s ease-out;
   //flex: 1;
 
   @for $i from 1 through 12{

@@ -3,8 +3,9 @@ import drag from "./drag";
 
 const mouseup = fromEvent('mouseup', document);
 
-const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, ready}) => {
-    const mousemove = fromEvent('mousemove', resizable);
+const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, resizeReady}) => {
+    const mousemove = fromEvent('mousemove', document);
+    const mousemoveRezisable = fromEvent('mousemove', resizable);
     const mousedown = fromEvent('mousedown', resizable);
 
     const filterCursor = ({clientX, clientY}) => {
@@ -13,23 +14,21 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
         return (clientX <= left + offset) || (clientX >= right - offset);
     };
 
-    const resizing = mousemove
-    // .takeWhile(resizePredicate)
+    const resizing = mousemoveRezisable
         .filter(resizePredicate)
         .tap(() => {
             resizable.style.cursor = 'initial';
-            ready(false);
+            resizeReady(false);
         })
         .filter(filterCursor)
         .tap(() => {
             resizable.style.cursor = 'ew-resize';
-            ready(true);
+            resizeReady(true);
         })
         .concatMap(() => {
             return mousedown
                 .filter(resizePredicate)
                 .filter(filterCursor)
-                // .takeWhile(resizePredicate)
                 .chain(() => {
                     return mousemove
                         .take(1)
@@ -39,7 +38,7 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
                         .until(mouseup.tap((pos) => {
                             resizeEnd(resizable, pos)
                         }))
-                        .filter(filterCursor)
+                        // .filter(filterCursor)
                         .scan(({x, y}, {clientX, clientY}) => {
                             const {left, width} = resizable.getBoundingClientRect();
                             const side = clientX <= left + width / 2 ? 'left' : 'right';
