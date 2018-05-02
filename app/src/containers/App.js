@@ -244,7 +244,9 @@ class App extends Component {
         const dif = x - parentRect.left - prevSiblingColWidth - (side === 'right'? elemCol * colWidth : 0);
         const movementColNum = Math.floor(Math.abs(dif) / colWidth);
         // console.log('x', x, 'left', elemRect.left, 'width', colWidth, 'dif', dif);
+
         if (movementColNum > 0) {
+            console.log('movementColNum', movementColNum);
 
             const getSibling = (elem, side) => side === 'left' ? elem.previousSibling : elem.nextSibling;
             const neighbour = getSibling(elem, side);
@@ -328,6 +330,18 @@ class App extends Component {
         if (!elem) return;
         const rect = elem.getBoundingClientRect();
         this.tempState = {...this.tempState, grids: [...this.tempState.grids, {node: elem, rect, level: 0}]};
+
+        const parentRect = elem.getBoundingClientRect();
+        const colWidth = parentRect.width / 12;
+        Array(11).fill(1).forEach((item, index)=>{
+            const gridLine = document.createElement('div');
+            gridLine.style.position = 'absolute';
+            gridLine.style.height = parentRect.height + 'px';
+            gridLine.style.borderLeft = '1px dashed red';
+            gridLine.style.top = parentRect.top + 'px';
+            gridLine.style.left = parentRect.left + colWidth * (index+1) + 'px';
+            document.body.appendChild(gridLine);
+        })
     }
 
     render() {
