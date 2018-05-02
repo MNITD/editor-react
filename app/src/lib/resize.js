@@ -32,7 +32,7 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
                 .chain(() => {
                     return mousemove
                         .take(1)
-                        .tap((pos) => resizeStart(resizable, pos))
+                        .tap(( {clientX, clientY}) => resizeStart(resizable, {x: clientX, y: clientY}))
                         .concat(mousemove.skip(1))
                         .tap(mm => mm.preventDefault()) // prevent text selecting
                         .until(mouseup.tap((pos) => {

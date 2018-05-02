@@ -2,20 +2,20 @@
   //margin: 4px 0; /*??*/
   //padding: 8px;
   height: inherit;
-  background-color: lightgray;
+  //background-color: lightgray;
   color:  var(--color-menu-text);
   font-size: 14px;
   //height: 24px;
   line-height: inherit;
-  //padding: 0 12px;
+  padding: 0 12px;
   min-width: 16px;
   //border-radius: 4px;
   user-select: none;
   cursor: default;
   border: none;
   display: block;
-  box-shadow: inset 5px 0 0 0 yellow;
-  transition: width 0.3s ease-out;
+  //box-shadow: inset 5px 0 0 0 yellow;
+  transition: width 0.5s ease-out;
   //flex: 1;
 
   @for $i from 1 through 12{

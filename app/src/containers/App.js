@@ -13,6 +13,7 @@ import {addBlock, moveBlock, deleteBlock} from '../actions/blockActions';
 //style
 import '../styles/main.scss';
 import '../styles/drag_n_drop.scss';
+import '../styles/resize.scss';
 
 class App extends Component {
     constructor(props) {
@@ -214,83 +215,87 @@ class App extends Component {
         return this.tempState.enableDragging;
     }
 
+    moveResizeLine(x) {
+        const resizeLine = document.querySelector('.resize-line');
+        if (resizeLine) resizeLine.style.left = `${x}px`;
+    }
+
+    resize(elem, {side, direction, x, index}) {
+        const multiply = side === 'left' ? -1 : 1;
+        const siblingNum = elem.parentNode.children.length - 1;
+
+        const getColNum = (elem) => {
+            const elemColEnd = elem.className.indexOf('--col-') + 6;
+            return parseInt(elem.className.substr(elemColEnd, 2), 10);
+        };
+
+        const elemCol = getColNum(elem);
+
+        if (elemCol === 12 - siblingNum && direction === multiply) return;
+        if (elemCol === 1 && direction === (-1) * multiply) return;
+
+        this.moveResizeLine(x);
+
+        const parentRect = elem.parentNode.getBoundingClientRect();
+        const colWidth = parentRect.width / 12;
+        const prevSiblingColWidth = [...elem.parentNode.children]
+            .slice(0, index)
+            .reduce((acc, item) => acc + getColNum(item), 0) * colWidth;
+        const dif = x - parentRect.left - prevSiblingColWidth - (side === 'right'? elemCol * colWidth : 0);
+        const movementColNum = Math.floor(Math.abs(dif) / colWidth);
+        // console.log('x', x, 'left', elemRect.left, 'width', colWidth, 'dif', dif);
+        if (movementColNum > 0) {
+
+            const getSibling = (elem, side) => side === 'left' ? elem.previousSibling : elem.nextSibling;
+            const neighbour = getSibling(elem, side);
+
+            if (neighbour) {
+
+                const neighbourCol = getColNum(neighbour);
+                console.log('neighbourCol', neighbourCol);
+                if (neighbourCol === 1 && direction === multiply) return;
+
+                const newElemCol = elemCol + movementColNum * direction * multiply;
+                elem.classList.remove(`block--col-${elemCol}`);
+                elem.classList.add(`block--col-${newElemCol}`);
+
+                const newNeighbourCol = neighbourCol + movementColNum * direction * (-1) * multiply;
+                neighbour.classList.remove(`block--col-${neighbourCol}`);
+                neighbour.classList.add(`block--col-${newNeighbourCol}`);
+            }
+        }
+    }
+
     resizeReady(state) {
         this.tempState.enableDragging = !state;
     }
 
-    resizeStart() {
-        console.log('resizeStart')
+    resizeStart(elem, pos) {
+        console.log('resizeStart');
+        const elemRect = elem.getBoundingClientRect();
+        const resizeLine = document.createElement('div');
+        resizeLine.classList.add('resize-line');
+        resizeLine.style.height = `${elemRect.height}px`;
+        resizeLine.style.top = `${elemRect.top}px`;
+        resizeLine.style.left = `${pos.x}px`;
+        document.body.appendChild(resizeLine);
     }
 
     onResize(elem, {direction, side, x}) {
         const {index} = elem.dataset;
-        const siblingNum = elem.parentNode.children.length - 1;
+        const normalIndex = +index.slice(-2)[0];
 
         if (direction === 0) return;
+        if (side === 'left' && normalIndex === 0) return; // if element first and side left
+        if (side === 'right' && normalIndex === elem.parentNode.children.length - 1) return; //// if element last and side right
 
-        if (side === 'left') {
-            if (+index.slice(-2)[0] === 0) return; // if element first and side left
-
-            const elemColEnd = elem.className.indexOf('--col-') + 6;
-            const elemCol = parseInt(elem.className.substr(elemColEnd, 2), 10);
-            if (elemCol === 12 - siblingNum && direction === -1) return;
-            if (elemCol === 1 && direction === 1) return;
-
-            const elemRect = elem.getBoundingClientRect();
-            const colWidth = elemRect.width / elemCol;
-            const dif = x - elemRect.left - (direction * colWidth);
-            console.log('x', x, 'left', elemRect.left, 'width', colWidth, 'dif', dif);
-            if (Math.abs(dif) <= 5) {
-                elem.classList.remove(`block--col-${elemCol}`);
-                elem.classList.add(`block--col-${elemCol - direction}`);
-
-                const neighbour = elem.previousSibling;
-
-                if (neighbour) {
-                    const neighbourColEnd = neighbour.className.indexOf('--col-') + 6;
-                    const neighbourCol = parseInt(neighbour.className.substr(neighbourColEnd, 2), 10);
-                    console.log('neighbourCol', neighbourCol);
-                    if (neighbourCol === 1 && direction === -1) return;
-                    neighbour.classList.remove(`block--col-${neighbourCol}`);
-                    neighbour.classList.add(`block--col-${neighbourCol + direction}`);
-                }
-            }
-
-
-        }
-
-        if (side === 'right') {
-            if (+index.slice(-2)[0] === elem.parentNode.children.length - 1) return; // if element last and side right
-
-            const elemColEnd = elem.className.indexOf('--col-') + 6;
-            const elemCol = parseInt(elem.className.substr(elemColEnd, 2), 10);
-            if (elemCol === 12 - siblingNum && direction === 1) return;
-            if (elemCol === 1 && direction === -1) return;
-
-            const elemRect = elem.getBoundingClientRect();
-            const colWidth = elemRect.width / elemCol;
-            const dif = x - elemRect.right - (direction * colWidth);
-            console.log('x', x, 'left', elemRect.right, 'width', colWidth, 'dif', dif);
-            if (Math.abs(dif) <= 5) {
-                elem.classList.remove(`block--col-${elemCol}`);
-                elem.classList.add(`block--col-${elemCol + direction}`);
-
-                const neighbour = elem.nextSibling;
-
-                if (neighbour) {
-                    const neighbourColEnd = neighbour.className.indexOf('--col-') + 6;
-                    const neighbourCol = parseInt(neighbour.className.substr(neighbourColEnd, 2), 10);
-                    if (neighbourCol === 1 && direction === 1) return;
-                    neighbour.classList.remove(`block--col-${neighbourCol}`);
-                    neighbour.classList.add(`block--col-${neighbourCol - direction}`);
-                }
-            }
-        }
-
+        this.resize(elem, {direction, side, x, index: normalIndex});
     }
 
     resizeEnd() {
         console.log('resizeEnd');
+        const resizeLine = document.querySelector('.resize-line');
+        if(resizeLine) resizeLine.parentNode.removeChild(resizeLine);
     }
 
     resizePredicate() {
