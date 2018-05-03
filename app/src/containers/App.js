@@ -7,8 +7,10 @@ import WorkArea from './WorkArea';
 import Menu from '../components/Menu';
 import {create} from '../lib/drag';
 import * as resize from '../lib/resize';
+import keyHandler from '../lib/keyHandler';
 import {connect} from 'react-redux';
 import {addBlock, moveBlock, deleteBlock, resizeBlock} from '../actions/blockActions';
+import {undoState, redoState} from '../actions/undoActions';
 
 //style
 import '../styles/main.scss';
@@ -20,6 +22,7 @@ class App extends Component {
         super(props);
 
         this.tempState = {draggables: [], grids: [], enableDragging: true, enableResizing: true};
+        keyHandler(props);
     }
 
     findDropCandidates(elem, droppables) {
@@ -368,4 +371,4 @@ const mapStateToProps = (state) => {
     return {blocks: [...state.present.blocks]};
 };
 
-export default connect(mapStateToProps, {addBlock, moveBlock, deleteBlock, resizeBlock})(App);
+export default connect(mapStateToProps, {addBlock, moveBlock, deleteBlock, resizeBlock, undoState, redoState})(App);
