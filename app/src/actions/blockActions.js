@@ -22,4 +22,11 @@ const deleteBlock = (index) => ({
     index,
 });
 
-export {addBlock, moveBlock, deleteBlock};
+const resizeBlock = (index, col, side) => ({
+    type: 'RESIZE_BLOCK',
+    index,
+    col,
+    side,
+});
+
+export {addBlock, moveBlock, deleteBlock, resizeBlock};

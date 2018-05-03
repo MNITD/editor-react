@@ -7,13 +7,13 @@ const splitIndex = (index) => index.slice(0, -1).split('L').map(index => +index)
 const getNode = (state, path) => {
     // TODO make deep copy with
     let currentNode = state[path[0]];
-    if(path > 1)
+    if(path.length > 1)
         path.slice(1).forEach((index) => {currentNode  = currentNode.children[index]});
     return currentNode;
     //TODO replace children of currentNode's parent with copy
 };
 
-const resize = (state, parentPath, node, inserting = true) => {
+const resizeChildren = (state, parentPath, node,inserting = true) => {
     const parentNode = getNode(state, parentPath);
     if(parentNode.children.length === 0) return;
     const inc = (inserting? (-1) : 1) * (node.col / parentNode.children.length);
@@ -21,16 +21,31 @@ const resize = (state, parentPath, node, inserting = true) => {
     parentNode.children = parentNode.children.map(child => ({...child, col: child.col + inc}));
 };
 
+const getSiblingPath = (path, side) =>{
+    return [...path.slice(0, -1), path.slice(-1)[0] + (side === 'left'? -1 : 1) ];
+};
+
+const resize = (state, nodePath, side, col) => {
+    const node = getNode(state, nodePath);
+    const dif = col - node.col;
+
+    const siblingPath = getSiblingPath(nodePath, side);
+    const siblingNode = getNode(state, siblingPath);
+    siblingNode.col -= dif;
+
+    node.col = col;
+};
+
 const removeNode = (state, path) => {
     const parentPath = path.slice(0, -1);
     const parentNode = getNode(state, parentPath);
     const node =  parentNode.children.splice(path[path.length - 1], 1)[0];
-    resize(state, parentPath, node, false);
+    resizeChildren(state, parentPath, node, false);
     return node;
 };
 
 const addNode = (state, parentPath, nextPath, node) =>{
-    resize(state, parentPath, node);
+    resizeChildren(state, parentPath, node);
     const parentNode = getNode(state, parentPath);
     if(nextPath)
         parentNode.children.splice(nextPath[nextPath.length - 1] - 1, 0, node);
@@ -78,6 +93,15 @@ const blocks = (state=[], action) =>{
             const {index} = action;
             const nodePath = splitIndex(index);
             removeNode(newState, nodePath);
+            return newState;
+        }
+        case 'RESIZE_BLOCK':{
+            const newState =  JSON.parse(JSON.stringify(state)); // [...state];
+            const {index,
+                side,
+                col} = action;
+            const nodePath = splitIndex(index);
+            resize(newState, nodePath, side, col);
             return newState;
         }
         default:

@@ -8,7 +8,7 @@ import Menu from '../components/Menu';
 import {create} from '../lib/drag';
 import * as resize from '../lib/resize';
 import {connect} from 'react-redux';
-import {addBlock, moveBlock, deleteBlock} from '../actions/blockActions';
+import {addBlock, moveBlock, deleteBlock, resizeBlock} from '../actions/blockActions';
 
 //style
 import '../styles/main.scss';
@@ -260,6 +260,7 @@ class App extends Component {
                 const newElemCol = elemCol + movementColNum * direction * multiply;
                 elem.classList.remove(`block--col-${elemCol}`);
                 elem.classList.add(`block--col-${newElemCol}`);
+                elem.dataset.side = side;
 
                 const newNeighbourCol = neighbourCol + movementColNum * direction * (-1) * multiply;
                 neighbour.classList.remove(`block--col-${neighbourCol}`);
@@ -294,10 +295,19 @@ class App extends Component {
         this.resize(elem, {direction, side, x, index: normalIndex});
     }
 
-    resizeEnd() {
+    resizeEnd(elem) {
         console.log('resizeEnd');
+
+        const getColNum = (elem) => {
+            const elemColEnd = elem.className.indexOf('--col-') + 6;
+            return parseInt(elem.className.substr(elemColEnd, 2), 10);
+        };
+
         const resizeLine = document.querySelector('.resize-line');
         if(resizeLine) resizeLine.parentNode.removeChild(resizeLine);
+
+        const {index, side} = elem.dataset;
+        this.props.resizeBlock(index, getColNum(elem), side);
     }
 
     resizePredicate() {
@@ -314,8 +324,8 @@ class App extends Component {
             resizeReady: ::this.resizeReady,
             onResize: ::this.onResize,
             resizePredicate: ::this.resizePredicate,
-            resizeStart: this.resizeStart,
-            resizeEnd: this.resizeEnd,
+            resizeStart: ::this.resizeStart,
+            resizeEnd: ::this.resizeEnd,
         });
 
         return create(elem, {
@@ -335,11 +345,10 @@ class App extends Component {
         const colWidth = parentRect.width / 12;
         Array(11).fill(1).forEach((item, index)=>{
             const gridLine = document.createElement('div');
-            gridLine.style.position = 'absolute';
             gridLine.style.height = parentRect.height + 'px';
-            gridLine.style.borderLeft = '1px dashed red';
             gridLine.style.top = parentRect.top + 'px';
             gridLine.style.left = parentRect.left + colWidth * (index+1) + 'px';
+            gridLine.classList.add('grid-line');
             document.body.appendChild(gridLine);
         })
     }
@@ -359,4 +368,4 @@ const mapStateToProps = (state) => {
     return {blocks: [...state.present.blocks]};
 };
 
-export default connect(mapStateToProps, {addBlock, moveBlock, deleteBlock})(App);
+export default connect(mapStateToProps, {addBlock, moveBlock, deleteBlock, resizeBlock})(App);
