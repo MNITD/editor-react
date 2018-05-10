@@ -19,7 +19,7 @@ class App extends Component {
     constructor(props) {
         super(props);
 
-        this.tempState = {draggables: [], grids: [], enableDragging: true, enableResizing: true};
+        this.tempState = {draggables: [], enableDragging: true, enableResizing: true};
         keyHandler(props);
     }
 
@@ -50,7 +50,10 @@ class App extends Component {
             const elemCenter = elemRect.left + elemRect.width / 2;
             const center = left + width / 2;
             if (left < elemRect.left)
-                return {area: right - elemRect.left, direction: elemCenter > center ? 'after' : 'before'};
+                return {
+                    area: right - elemRect.left,
+                    direction: elemCenter > center && index !== 0 ? 'after' : 'before'
+                };
 
             return {area: elemRect.right - left, direction: elemCenter < center ? 'before' : 'after'}
         };
@@ -200,7 +203,8 @@ class App extends Component {
     }
 
     dragStart(elem, {clientX, clientY}) {
-        console.log(elem.parentNode.children.length);
+        console.log()
+        // console.log(elem.parentNode.children.length);
         if (elem.parentNode.classList.contains('menu__tab-subsection')) {
             const copy = elem.cloneNode(true);
             elem.parentNode.replaceChild(copy, elem);
@@ -208,6 +212,16 @@ class App extends Component {
             this.initDraggable(copy);
             document.body.appendChild(elem);
         }
+
+        this.tempState.draggableContent = elem.innerText;
+        elem.innerText = elem.dataset.type;
+        console.log('setting inner text');
+
+        if (elem.dataset.type === 'Text') this.tempState.draggableContent = 'lorem lorem kfs ekw sldk sldk .d ksld ksd.' +
+            'skldklorem lorem kfs ekw sldk sldk .d ksld ksd. skldk lorem lorem kfs ekw sldk sldk .d ksld ksd. skldk lorem' +
+            'lorem kfs ekw sldk sldk .d ksld ksd. skldk ';
+
+        if (elem.dataset.type === 'Empty') this.tempState.draggableContent = '';
 
         elem.classList.add('draggable--moved');
         const {height, width} = elem.getBoundingClientRect();
@@ -217,7 +231,11 @@ class App extends Component {
 
     onDrag(elem, pos) {
         let {preview} = this.tempState;
-        const {grids, workArea, outlinedDroppable} = this.tempState;
+        const {workArea, outlinedDroppable} = this.tempState;
+
+        const grids = [...document.getElementsByClassName('grid')].map(elem => ({
+            node: elem, rect: elem.getBoundingClientRect()
+        }));
 
         const [dropCandidate] = this.findDropCandidates(elem, grids);
 
@@ -262,11 +280,13 @@ class App extends Component {
         const {preview} = this.tempState;
         if (preview) {
             const {parentIndex, colNum, nextIndex, enableGrid, node} = preview;
+            const {draggableContent} = this.tempState;
+            elem.innerText = draggableContent;
 
             if (index)
                 this.props.moveBlock(index, parentIndex, nextIndex, colNum, enableGrid);
             else {
-                this.props.addBlock(type, parentIndex, nextIndex, colNum, enableGrid);
+                this.props.addBlock(type, parentIndex, nextIndex, colNum, draggableContent, enableGrid);
                 elem.parentNode.removeChild(elem);// TODO  unsubscribe Block from drag
             }
             node.parentNode.removeChild(node);
@@ -388,7 +408,7 @@ class App extends Component {
 
     initDraggable(elem) {
         if (!elem) return;
-        console.log('initDraggable');
+        console.log('initDraggable', elem);
 
         elem.classList.add('draggable');
 
@@ -410,18 +430,19 @@ class App extends Component {
 
     initGrid(elem) {
         if (!elem) return;
-        const rect = elem.getBoundingClientRect();
-        this.tempState = {...this.tempState, grids: [...this.tempState.grids, {node: elem, rect, level: 0}]};
+        // const rect = elem.getBoundingClientRect();
+        // this.tempState = {...this.tempState, grids: [...this.tempState.grids, {node: elem, rect,}]};
 
-        const parentRect = elem.getBoundingClientRect();
-        const colWidth = 100 / 12;
-        Array(11).fill(1).forEach((item, index) => {
-            const gridLine = document.createElement('div');
-            gridLine.style.height = parentRect.height + 'px';
-            gridLine.style.left = `${colWidth * (index + 1)}%`;
-            gridLine.classList.add('grid-line');
-            elem.appendChild(gridLine);
-        });
+        // const parentRect = elem.getBoundingClientRect();
+        // const colWidth = 100 / 12;
+        // Array(11).fill(1).forEach((item, index) => {
+        //     const gridLine = document.createElement('div');
+        //     gridLine.style.height = parentRect.height + 'px';
+        //     gridLine.style.top = parentRect.top +'px';
+        //     gridLine.style.left = `${colWidth * (index + 1)}%`;
+        //     gridLine.classList.add('grid-line');
+        //     document.body.appendChild(gridLine);
+        // });
     }
 
     render() {

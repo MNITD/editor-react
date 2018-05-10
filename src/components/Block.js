@@ -1,9 +1,7 @@
 /**
  * Created by bogdan on 22.02.18.
  */
-import React from 'react';
-import {Component} from 'react';
-
+import React, {Component} from 'react';
 // style
 import '../styles/Block.scss';
 
@@ -19,7 +17,7 @@ class Block extends Component{
         const {index, data:{blockType, col}} = this.props;
         return (
             <div className={`block block--col-${col}`} data-index={index} data-type={blockType} ref={this.setRef}>
-                {blockType}
+                {this.props.children}
             </div>
         );
     }

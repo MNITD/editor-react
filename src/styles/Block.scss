@@ -23,5 +23,8 @@
       width:(100% / 12 * $i);
     }
   }
+  &[data-index] {
+    padding: 12px;
+  }
 
 }

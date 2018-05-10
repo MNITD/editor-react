@@ -48,8 +48,11 @@ const removeNode = (state, path) => {
 const addNode = (state, parentPath, nextPath, node) =>{
     resizeChildren(state, parentPath, node);
     const parentNode = getNode(state, parentPath);
-    if(nextPath)
-        parentNode.children.splice(nextPath[nextPath.length - 1] - 1, 0, node);
+
+    if (nextPath) {
+        const startIndex = nextPath[nextPath.length - 1] > 0 ? nextPath[nextPath.length - 1] - 1 : 0;
+        parentNode.children.splice(startIndex, 0, node);
+    }
     else
         parentNode.children.push(node);
 };
@@ -63,7 +66,6 @@ const addGrid = (state, parentPath) => {
 
 const checkAndRemove = (state, parentPath) => {
     const parentNode = getNode(state, parentPath);
-    console.log(parentNode);
     if (parentNode.children.length === 0) state.splice(parentPath[0], 1);
 };
 
@@ -76,14 +78,13 @@ const blocks = (state=[], action) =>{
                 parentIndex,
                 nextIndex,
                 col,
+                content,
                 enableGrid
             } = action;
 
-            console.log(parentIndex, nextIndex);
-
             const parentPath = splitIndex(parentIndex);
             const nextPath =  nextIndex? splitIndex(nextIndex) : null;
-            const newBlock = {blockType, col, children: []};
+            const newBlock = {blockType, col, content, children: []};
 
             if (enableGrid) addGrid(newState, parentPath);
 
@@ -121,6 +122,7 @@ const blocks = (state=[], action) =>{
             const {index} = action;
             const nodePath = splitIndex(index);
             removeNode(newState, nodePath);
+            checkAndRemove(newState, nodePath.slice(0, -1));
             return newState;
         }
         case 'RESIZE_BLOCK':{

@@ -1,8 +1,7 @@
 /**
  * Created by bogdan on 22.02.18.
  */
-import React from 'react';
-import {Component} from 'react';
+import React, {Component} from 'react';
 import Block from '../components/Block';
 
 // style
@@ -18,15 +17,16 @@ class BlockList extends Component {
                     items: [
                         {blockType: 'Text', col: 12},
                         {blockType: 'Regular', col: 12},
+                        {blockType: 'Empty', col: 12},
                     ]
                 },
-                {
-                    name: 'Secondary',
-                    items: [
-                        {blockType: 'Text', col:12},
-                        {blockType: 'Regular', col: 12},
-                    ]
-                },
+                // {
+                //     name: 'Secondary',
+                //     items: [
+                //         {blockType: 'Text', col:12},
+                //         {blockType: 'Regular', col: 12},
+                //     ]
+                // },
             ]
         }
     }
@@ -50,7 +50,7 @@ class BlockList extends Component {
     getItems(items) {
         return items.map((item, index) => (
                 <li key={index} className="menu__tab-subsection">
-                    <Block  data={item} initDraggable={::this.props.initDraggable}/>
+                    <Block data={item} initDraggable={::this.props.initDraggable}>abra abra</Block>
                 </li>
             )
         );

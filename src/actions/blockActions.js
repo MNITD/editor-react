@@ -1,12 +1,13 @@
 /**
  * Created by bogdan on 29.03.18.
  */
-const addBlock = (blockType, parentIndex, nextIndex, col, enableGrid = false) => ({
+const addBlock = (blockType, parentIndex, nextIndex, col, content, enableGrid = false) => ({
     type: 'ADD_BLOCK',
     blockType,
     parentIndex,
     nextIndex,
     col,
+    content,
     enableGrid,
 });
 

@@ -19,7 +19,8 @@ class WorkArea extends Component {
     getChildren(blocks, parentIndex = '') {
         return blocks.map((block, index) => {
                 const newIndex = `${parentIndex}${index}L`;
-                return <Block key={index} index={newIndex} data={block} initDraggable={::this.props.initDraggable}/>
+            return <Block key={index} index={newIndex} data={block}
+                          initDraggable={::this.props.initDraggable}>{block.content}</Block>
             }
         );
     }
