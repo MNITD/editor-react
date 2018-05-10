@@ -1,21 +1,19 @@
 /**
  * Created by bogdan on 22.02.18.
  */
-import React from 'react';
-import {Component} from 'react';
+import React, {Component} from 'react';
 import WorkArea from './WorkArea';
 import Menu from '../components/Menu';
 import {create} from '../lib/drag';
 import * as resize from '../lib/resize';
 import keyHandler from '../lib/keyHandler';
 import {connect} from 'react-redux';
-import {addBlock, moveBlock, deleteBlock, resizeBlock} from '../actions/blockActions';
-import {undoState, redoState} from '../actions/undoActions';
-
+import {addBlock, deleteBlock, moveBlock, resizeBlock} from '../actions/blockActions';
+import {redoState, undoState} from '../actions/undoActions';
 //style
-import '../styles/main.scss';
-import '../styles/drag_n_drop.scss';
-import '../styles/resize.scss';
+import '../styles/Main.scss';
+import '../styles/DragNDrop.scss';
+import '../styles/Resize.scss';
 
 class App extends Component {
     constructor(props) {
@@ -23,6 +21,15 @@ class App extends Component {
 
         this.tempState = {draggables: [], grids: [], enableDragging: true, enableResizing: true};
         keyHandler(props);
+    }
+
+    inWorkArea(elem, workArea) {
+        const elemRect = elem.getBoundingClientRect();
+        const centerH = elemRect.top + window.scrollY + elemRect.height / 2;
+        const centerW = elemRect.left + window.scrollX + elemRect.width / 2;
+        const {left, right, top, bottom} = workArea.getBoundingClientRect();
+
+        return (left < centerW && right > centerW) && (top < centerH && bottom > centerH)
     }
 
     findDropCandidates(elem, droppables) {
@@ -62,13 +69,16 @@ class App extends Component {
             .sort((a, b) => b.area - a.area);
     };
 
-    createPreview({rect: {height}, node}, elem) {
+    createPreview({rect: {height, width}}, horizontal = true) {
         const previewPadding = 20;
         let preview = document.createElement('div');
         preview.classList.add('draggable-preview');
 
-        // preview.classList.add(`block--col-${colNum}`);
-        preview.style.height = height - previewPadding + 'px';
+        if (horizontal)
+            preview.style.height = height - previewPadding + 'px';
+        else
+            preview.style.width = width - previewPadding + 'px';
+
         return preview;
     }
 
@@ -80,18 +90,24 @@ class App extends Component {
 
     updatePreview(oldPreview, dropCandidate, elem, {node, direction}) {
         let preview = oldPreview;
+
+        if (preview) {
+            if (preview.node === node) return preview;
+            preview.node.parentNode.removeChild(preview.node);
+        }
+
+        preview = {};
+        const previewOffset = 8;
+
+        const {workArea} = this.tempState;
+        const workAreaRect = workArea.getBoundingClientRect();
+
         if (dropCandidate) {
-            if (preview) {
-                if (preview.node === node) return preview;
-                preview.node.parentNode.removeChild(preview.node);
-            }
-            preview = {};
-            preview.node = this.createPreview(dropCandidate, elem);
+            preview.node = this.createPreview(dropCandidate);
             preview.parentIndex = dropCandidate.node.dataset.index;
             preview.colNum = this.calulateColNum(dropCandidate, elem);
 
             const parentNode = dropCandidate.node;
-            const previewOffset = 8;
 
             switch (direction) {
                 case 'before': {
@@ -102,13 +118,33 @@ class App extends Component {
                     // parentNode.insertBefore(preview, node);
                     break;
                 }
-                case 'after':
+                case 'after': {
                     const nodeRect = node.getBoundingClientRect();
                     preview.node.style.left = nodeRect.right - previewOffset + 'px';
                     preview.node.style.top = nodeRect.top + 'px';
                     preview.nextIndex = node.nextSibling ? node.nextSibling.dataset.index : null;
                     // insertAfter(preview, node);
                     break;
+                }
+                case 'beforeV': {
+                    const nodeRect = dropCandidate.node.getBoundingClientRect();
+                    preview.node = this.createPreview({rect: workAreaRect}, false);
+                    preview.colNum = 12;
+                    preview.enableGrid = true;
+                    preview.node.style.left = workAreaRect.left + previewOffset + 'px';
+                    preview.node.style.top = nodeRect.top - 2 * previewOffset + 'px';
+                    break;
+                }
+                case 'afterV': {
+                    const nodeRect = dropCandidate.node.getBoundingClientRect();
+                    preview.node = this.createPreview({rect: workAreaRect}, false);
+                    preview.parentIndex = dropCandidate.nextSibling ? dropCandidate.nextSibling.dataset.index : preview.parentIndex;
+                    preview.colNum = 12;
+                    preview.enableGrid = true;
+                    preview.node.style.left = workAreaRect.left + previewOffset + 'px';
+                    preview.node.style.top = nodeRect.bottom - 2 * previewOffset + 'px';
+                    break;
+                }
                 default: {
                     const parentRect = parentNode.getBoundingClientRect();
                     preview.node.style.left = parentRect.left - previewOffset + 'px';
@@ -127,22 +163,40 @@ class App extends Component {
                     // parentNode.appendChild(preview);
                     break;
                 }
-
             }
-            document.body.appendChild(preview.node);
+        } else {
+            preview.node = this.createPreview({rect: workAreaRect}, false);
+            preview.colNum = 12;
+            preview.parentIndex = '0L';
+            preview.enableGrid = true;
+            preview.node.style.left = workAreaRect.left + previewOffset + 'px';
+
+            // TODO refactor
+            const childrenLen = workArea.children.length;
+            if (childrenLen > 0) {
+                const lastChildRect = workArea.children[childrenLen - 1].getBoundingClientRect();
+                const {bottom} = elem.getBoundingClientRect();
+                if (bottom > lastChildRect.bottom) {
+                    preview.node.style.top = lastChildRect.bottom - 2 * previewOffset + 'px';
+                    preview.parentIndex = childrenLen + 'L'
+                }
+                else
+                    preview.node.style.top = workAreaRect.top + 'px';
+            } else
+                preview.node.style.top = workAreaRect.top + 'px';
         }
+        document.body.appendChild(preview.node);
         return preview;
     };
 
     outlineDroppable(dropCandidate, oldOutlined) {
-        let outlined = oldOutlined;
+        if (oldOutlined) oldOutlined.node.classList.remove('droppable--outlined');
         if (dropCandidate) {
-            if (outlined) outlined.node.classList.remove('droppable--outlined');
             dropCandidate.node.classList.add('droppable--outlined');
-            outlined = dropCandidate;
+            return dropCandidate;
         }
 
-        return outlined;
+        return oldOutlined;
     }
 
     dragStart(elem, {clientX, clientY}) {
@@ -163,16 +217,29 @@ class App extends Component {
 
     onDrag(elem, pos) {
         let {preview} = this.tempState;
-        const {grids, outlinedDroppable} = this.tempState;
+        const {grids, workArea, outlinedDroppable} = this.tempState;
+
         const [dropCandidate] = this.findDropCandidates(elem, grids);
 
         if (dropCandidate) {
-            const [neighbour] = this.findNeighbours(elem, [...dropCandidate.node.children]);
-            if (neighbour)
-                preview = this.updatePreview(preview, dropCandidate, elem, neighbour);
-            else
-                preview = this.updatePreview(preview, dropCandidate, elem, {});
+            const {top, bottom} = dropCandidate.rect;
+            const elemRect = elem.getBoundingClientRect();
+            const centerH = elemRect.top + window.scrollY + elemRect.height / 2;
 
+            if (centerH - top < 16)
+                preview = this.updatePreview(preview, dropCandidate, elem, {direction: 'beforeV'});
+            else if (bottom - centerH < 16)
+                preview = this.updatePreview(preview, dropCandidate, elem, {direction: 'afterV'});
+            else {
+                const [neighbour] = this.findNeighbours(elem, [...dropCandidate.node.children]);
+                if (neighbour)
+                    preview = this.updatePreview(preview, dropCandidate, elem, neighbour);
+                else
+                    preview = this.updatePreview(preview, dropCandidate, elem, {});
+            }
+
+        } else if (this.inWorkArea(elem, workArea)) { // top and bottom adding
+            preview = this.updatePreview(preview, dropCandidate, elem, {});
         } else if (preview) {
             preview.node.parentNode.removeChild(preview.node);
             preview = null;
@@ -194,17 +261,15 @@ class App extends Component {
 
         const {preview} = this.tempState;
         if (preview) {
-            const parentIndex = preview.parentIndex;
-            const nextIndex = preview.nextIndex;
-            const previewCol = preview.colNum;
+            const {parentIndex, colNum, nextIndex, enableGrid, node} = preview;
 
             if (index)
-                this.props.moveBlock(index, parentIndex, nextIndex, previewCol);
+                this.props.moveBlock(index, parentIndex, nextIndex, colNum, enableGrid);
             else {
-                this.props.addBlock(type, parentIndex, nextIndex, previewCol);
-                elem.parentNode.removeChild(elem);
+                this.props.addBlock(type, parentIndex, nextIndex, colNum, enableGrid);
+                elem.parentNode.removeChild(elem);// TODO  unsubscribe Block from drag
             }
-            preview.node.parentNode.removeChild(preview.node); // TODO  unsubscribe Block from drag
+            node.parentNode.removeChild(node);
         } else if (index)
             this.props.deleteBlock(index);
 
@@ -244,7 +309,7 @@ class App extends Component {
         const prevSiblingColWidth = [...elem.parentNode.children]
             .slice(0, index)
             .reduce((acc, item) => acc + getColNum(item), 0) * colWidth;
-        const dif = x - parentRect.left - prevSiblingColWidth - (side === 'right'? elemCol * colWidth : 0);
+        const dif = x - parentRect.left - prevSiblingColWidth - (side === 'right' ? elemCol * colWidth : 0);
         const movementColNum = Math.floor(Math.abs(dif) / colWidth);
         // console.log('x', x, 'left', elemRect.left, 'width', colWidth, 'dif', dif);
 
@@ -307,7 +372,7 @@ class App extends Component {
         };
 
         const resizeLine = document.querySelector('.resize-line');
-        if(resizeLine) resizeLine.parentNode.removeChild(resizeLine);
+        if (resizeLine) resizeLine.parentNode.removeChild(resizeLine);
 
         const {index, side} = elem.dataset;
         this.props.resizeBlock(index, getColNum(elem), side);
@@ -317,12 +382,16 @@ class App extends Component {
         return this.tempState.enableResizing;
     }
 
+    initWorkArea(elem) {
+        this.tempState.workArea = elem;
+    }
+
     initDraggable(elem) {
         if (!elem) return;
         console.log('initDraggable');
 
         elem.classList.add('draggable');
-        // this.tempState = {...this.tempState, draggables: [...this.tempState.draggables, {node: elem}]};
+
         resize.create(elem, {
             resizeReady: ::this.resizeReady,
             onResize: ::this.onResize,
@@ -345,22 +414,22 @@ class App extends Component {
         this.tempState = {...this.tempState, grids: [...this.tempState.grids, {node: elem, rect, level: 0}]};
 
         const parentRect = elem.getBoundingClientRect();
-        const colWidth = parentRect.width / 12;
-        Array(11).fill(1).forEach((item, index)=>{
+        const colWidth = 100 / 12;
+        Array(11).fill(1).forEach((item, index) => {
             const gridLine = document.createElement('div');
             gridLine.style.height = parentRect.height + 'px';
-            gridLine.style.top = parentRect.top + 'px';
-            gridLine.style.left = parentRect.left + colWidth * (index+1) + 'px';
+            gridLine.style.left = `${colWidth * (index + 1)}%`;
             gridLine.classList.add('grid-line');
-            document.body.appendChild(gridLine);
-        })
+            elem.appendChild(gridLine);
+        });
     }
 
     render() {
         return (
             <div>
                 <Menu initDraggable={::this.initDraggable}/>
-                <WorkArea blocks={this.props.blocks} initGrid={::this.initGrid} initDraggable={::this.initDraggable}/>
+                <WorkArea blocks={this.props.blocks} initWorkArea={::this.initWorkArea} initGrid={::this.initGrid}
+                          initDraggable={::this.initDraggable}/>
             </div>
         );
     }

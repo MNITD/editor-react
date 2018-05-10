@@ -41,6 +41,7 @@ const removeNode = (state, path) => {
     const parentNode = getNode(state, parentPath);
     const node =  parentNode.children.splice(path[path.length - 1], 1)[0];
     resizeChildren(state, parentPath, node, false);
+
     return node;
 };
 
@@ -53,6 +54,19 @@ const addNode = (state, parentPath, nextPath, node) =>{
         parentNode.children.push(node);
 };
 
+const addGrid = (state, parentPath) => {
+    const grid = {
+        blockType: 'Grid', children: []
+    };
+    state.splice(parentPath[0], 0, grid);
+};
+
+const checkAndRemove = (state, parentPath) => {
+    const parentNode = getNode(state, parentPath);
+    console.log(parentNode);
+    if (parentNode.children.length === 0) state.splice(parentPath[0], 1);
+};
+
 const blocks = (state=[], action) =>{
     console.log(state);
     switch (action.type){
@@ -61,12 +75,17 @@ const blocks = (state=[], action) =>{
             const {blockType,
                 parentIndex,
                 nextIndex,
-                col} = action;
+                col,
+                enableGrid
+            } = action;
 
             console.log(parentIndex, nextIndex);
+
             const parentPath = splitIndex(parentIndex);
             const nextPath =  nextIndex? splitIndex(nextIndex) : null;
             const newBlock = {blockType, col, children: []};
+
+            if (enableGrid) addGrid(newState, parentPath);
 
             addNode(newState, parentPath, nextPath, newBlock);
 
@@ -77,14 +96,23 @@ const blocks = (state=[], action) =>{
             const {index,
                 parentIndex,
                 nextIndex,
-                col} = action;
+                col,
+                enableGrid
+            } = action;
+
             const parentPath = splitIndex(parentIndex);
             const nodePath = splitIndex(index);
             const nextPath =  nextIndex? splitIndex(nextIndex) : null;
+
             const node = removeNode(newState, nodePath);
+
+            if (enableGrid) addGrid(newState, parentPath);
+
             node.col = col;
 
             addNode(newState, parentPath, nextPath, node);
+
+            checkAndRemove(newState, nodePath.slice(0, -1));
 
             return newState;
         }

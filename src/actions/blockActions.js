@@ -1,20 +1,22 @@
 /**
  * Created by bogdan on 29.03.18.
  */
-const addBlock = (blockType, parentIndex, nextIndex, col) => ({
+const addBlock = (blockType, parentIndex, nextIndex, col, enableGrid = false) => ({
     type: 'ADD_BLOCK',
     blockType,
     parentIndex,
     nextIndex,
     col,
+    enableGrid,
 });
 
-const moveBlock = (index, parentIndex, nextIndex, col) => ({
+const moveBlock = (index, parentIndex, nextIndex, col, enableGrid = false) => ({
     type: 'MOVE_BLOCK',
     index,
     parentIndex,
     nextIndex,
     col,
+    enableGrid,
 });
 
 const deleteBlock = (index) => ({

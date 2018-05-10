@@ -1,11 +1,10 @@
 /**
  * Created by bogdan on 22.02.18.
  */
-import React from 'react';
-import {Component} from 'react';
+import React, {Component} from 'react';
 import {connect} from "react-redux";
 import BlockList from '../containers/BlockList';
-import {undoState, redoState} from  '../actions/undoActions';
+import {redoState, undoState} from '../actions/undoActions';
 // style
 import '../styles/Menu.scss';
 
@@ -23,17 +22,6 @@ class Menu extends Component{
                             <BlockList initDraggable={::this.props.initDraggable}/>
                         </div>
                     </div>
-                </div>
-
-                <div className="menu__tab">
-                    <a href="" className="menu__tab-link">
-                        <i className="material-icons">grid_on</i>
-                        <div className="menu__tab-container">
-                            <div className="menu__tab-content">
-                                <h1 className="menu__tab-heading">Containers</h1>
-                            </div>
-                        </div>
-                    </a>
                 </div>
 
                 <div className="menu__tab">
