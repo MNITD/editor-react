@@ -17,7 +17,7 @@ const resizeChildren = (state, parentPath, node,inserting = true) => {
     const parentNode = getNode(state, parentPath);
     if(parentNode.children.length === 0) return;
     const inc = (inserting? (-1) : 1) * (node.col / parentNode.children.length);
-    console.log(' parentNode.children.length',  parentNode.children.length, 'node.col',node.col, 'inc', inc);
+    // console.log(' parentNode.children.length',  parentNode.children.length, 'node.col',node.col, 'inc', inc);
     parentNode.children = parentNode.children.map(child => ({...child, col: child.col + inc}));
 };
 

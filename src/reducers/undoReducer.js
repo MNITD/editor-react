@@ -18,15 +18,15 @@ const editorState = (reducer) => {
                 //         }
                 //     ]
                 // },
-                {
-                    blockType: 'Grid',
-                    children: [],
-                },
-
-                {
-                    blockType: 'Grid',
-                    children: [],
-                },
+                // {
+                //     blockType: 'Grid',
+                //     children: [],
+                // },
+                //
+                // {
+                //     blockType: 'Grid',
+                //     children: [],
+                // },
             ]
         },
         future: [],

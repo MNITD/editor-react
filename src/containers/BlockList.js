@@ -50,7 +50,7 @@ class BlockList extends Component {
     getItems(items) {
         return items.map((item, index) => (
                 <li key={index} className="menu__tab-subsection">
-                    <Block data={item} initDraggable={::this.props.initDraggable}>abra abra</Block>
+                    <Block data={item} initDraggable={::this.props.initDraggable}>{item.blockType}</Block>
                 </li>
             )
         );

@@ -215,7 +215,6 @@ class App extends Component {
 
         this.tempState.draggableContent = elem.innerText;
         elem.innerText = elem.dataset.type;
-        console.log('setting inner text');
 
         if (elem.dataset.type === 'Text') this.tempState.draggableContent = 'lorem lorem kfs ekw sldk sldk .d ksld ksd.' +
             'skldklorem lorem kfs ekw sldk sldk .d ksld ksd. skldk lorem lorem kfs ekw sldk sldk .d ksld ksd. skldk lorem' +
@@ -408,7 +407,7 @@ class App extends Component {
 
     initDraggable(elem) {
         if (!elem) return;
-        console.log('initDraggable', elem);
+        console.log('initDraggable');
 
         elem.classList.add('draggable');
 
