@@ -11,7 +11,6 @@ import {connect} from 'react-redux';
 import {addBlock, deleteBlock, moveBlock, resizeBlock} from '../actions/blockActions';
 import {redoState, undoState} from '../actions/undoActions';
 //style
-import '../styles/Main.scss';
 import '../styles/DragNDrop.scss';
 import '../styles/Resize.scss';
 

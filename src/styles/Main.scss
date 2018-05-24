@@ -1,6 +1,24 @@
-body{
-  padding: 0;
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
-  overflow-x: hidden;
+.main{
+  padding: 0 200px;
+  &__list{
+
+  }
+
+  &__item{
+
+  }
+
+  &__name{
+    display: inline-block;
+    width: 150px;
+  }
+
+  &__link{
+
+  }
+
+  &__btn{
+
+  }
+
 }
