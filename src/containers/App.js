@@ -232,7 +232,7 @@ class App extends Component {
         const {workArea, outlinedDroppable} = this.tempState;
 
         const grids = [...document.getElementsByClassName('grid')].map(elem => ({
-            node: elem, rect: elem.getBoundingClientRect()
+            node: elem, rect: elem.getBoundingClientRect(),
         }));
 
         const [dropCandidate] = this.findDropCandidates(elem, grids);
@@ -310,12 +310,7 @@ class App extends Component {
         const multiply = side === 'left' ? -1 : 1;
         const siblingNum = elem.parentNode.children.length - 1;
 
-        const getColNum = (elem) => {
-            const elemColEnd = elem.className.indexOf('--col-') + 6;
-            return parseInt(elem.className.substr(elemColEnd, 2), 10);
-        };
-
-        const elemCol = getColNum(elem);
+        const elemCol = +elem.dataset.col;//getColNum(elem);
 
         if (elemCol === 12 - siblingNum && direction === multiply) return;
         if (elemCol === 1 && direction === (-1) * multiply) return;
@@ -326,7 +321,7 @@ class App extends Component {
         const colWidth = parentRect.width / 12;
         const prevSiblingColWidth = [...elem.parentNode.children]
             .slice(0, index)
-            .reduce((acc, item) => acc + getColNum(item), 0) * colWidth;
+            .reduce((acc, item) => acc + +item.dataset.col, 0) * colWidth;
         const dif = x - parentRect.left - prevSiblingColWidth - (side === 'right' ? elemCol * colWidth : 0);
         const movementColNum = Math.floor(Math.abs(dif) / colWidth);
         // console.log('x', x, 'left', elemRect.left, 'width', colWidth, 'dif', dif);
@@ -339,18 +334,20 @@ class App extends Component {
 
             if (neighbour) {
 
-                const neighbourCol = getColNum(neighbour);
+                const neighbourCol = +neighbour.dataset.col; //getColNum(neighbour);
                 console.log('neighbourCol', neighbourCol);
                 if (neighbourCol === 1 && direction === multiply) return;
 
                 const newElemCol = elemCol + movementColNum * direction * multiply;
                 elem.classList.remove(`block--col-${elemCol}`);
                 elem.classList.add(`block--col-${newElemCol}`);
+                elem.dataset.col = newElemCol;
                 elem.dataset.side = side;
 
                 const newNeighbourCol = neighbourCol + movementColNum * direction * (-1) * multiply;
                 neighbour.classList.remove(`block--col-${neighbourCol}`);
                 neighbour.classList.add(`block--col-${newNeighbourCol}`);
+                neighbour.dataset.col = newNeighbourCol;
             }
         }
     }
@@ -384,16 +381,13 @@ class App extends Component {
     resizeEnd(elem) {
         console.log('resizeEnd');
 
-        const getColNum = (elem) => {
-            const elemColEnd = elem.className.indexOf('--col-') + 6;
-            return parseInt(elem.className.substr(elemColEnd, 2), 10);
-        };
+        console.log(elem.dataset.col);
 
         const resizeLine = document.querySelector('.resize-line');
         if (resizeLine) resizeLine.parentNode.removeChild(resizeLine);
 
-        const {index, side} = elem.dataset;
-        this.props.resizeBlock(index, getColNum(elem), side);
+        const {index, side, col} = elem.dataset;
+        this.props.resizeBlock(index, col, side);
     }
 
     resizePredicate() {
@@ -422,8 +416,8 @@ class App extends Component {
             onDrag: ::this.onDrag,
             dragStart: ::this.dragStart,
             dragEnd: ::this.dragEnd,
-            dragPredicate: ::this.dragPredicate
-        })
+            dragPredicate: ::this.dragPredicate,
+        });
     }
 
     initGrid(elem) {

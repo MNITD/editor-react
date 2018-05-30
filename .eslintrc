@@ -1,4 +1,5 @@
 {
+  "parser": "babel-eslint",
   "parserOptions": {
     "ecmaVersion": 2018,
     "sourceType": "module",
@@ -18,7 +19,7 @@
     "max-statements":[1, { "max": 10 }, { "ignoreTopLevelFunctions": true }],
     "dot-notation": 1,
     "no-sync": [1, { "allowAtRootLevel": false }],
-    "one-var": 1,
+    "one-var": [1, "never"],
     "no-multi-assign": 1,
     "operator-linebreak": [1, "none"],
     "comma-dangle": [1, "always-multiline"],

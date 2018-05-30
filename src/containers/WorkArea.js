@@ -19,8 +19,8 @@ class WorkArea extends Component {
     getChildren(blocks, parentIndex = '') {
         return blocks.map((block, index) => {
                 const newIndex = `${parentIndex}${index}L`;
-            return <Block key={index} index={newIndex} data={block}
-                          initDraggable={::this.props.initDraggable}>{block.content}</Block>
+            return (<Block key={index} index={newIndex} data={block}
+                          initDraggable={::this.props.initDraggable}>{block.content}</Block>);
             }
         );
     }
@@ -28,11 +28,11 @@ class WorkArea extends Component {
     getGrids(grids, parentIndex = '') {
         return grids.map((grid, index) => {
                 const newIndex = `${parentIndex}${index}L`;
-                return <Grid key={index} index={newIndex} initGrid={::this.props.initGrid}>
+                return (<Grid key={index} index={newIndex} initGrid={::this.props.initGrid}>
                     {this.getChildren(grid.children, newIndex)}
-                </Grid>
+                </Grid>);
             }
-        )
+        );
     }
 
     render() {

@@ -3,14 +3,21 @@
  */
 import React from 'react';
 import App from '../containers/App';
-import Main from '../components/Main';
+import Main from './Main';
 import {Provider} from 'react-redux';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import {BrowserRouter as Router, Route} from 'react-router-dom';
+import Login from './Login';
 
 const Root = ({store}) => (
     <Provider store={store}>
         <Router>
-            <Route path="/" component={Main}/>
+            <div>
+                {/*<Route path="/" exact={true} component={Main}/>*/}
+                {/*<Route path="/" exact={true} component={Login}/>*/}
+                <Route path="/login" component={Login}/>
+                {/*<Route path="/edit" component={App}/>*/}
+                <Route path="/" exact={true} component={App}/>
+            </div>
         </Router>
         {/*<App/>*/}
     </Provider>

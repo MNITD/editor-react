@@ -79,7 +79,7 @@ const blocks = (state=[], action) =>{
                 nextIndex,
                 col,
                 content,
-                enableGrid
+                enableGrid,
             } = action;
 
             const parentPath = splitIndex(parentIndex);
@@ -98,7 +98,7 @@ const blocks = (state=[], action) =>{
                 parentIndex,
                 nextIndex,
                 col,
-                enableGrid
+                enableGrid,
             } = action;
 
             const parentPath = splitIndex(parentIndex);
