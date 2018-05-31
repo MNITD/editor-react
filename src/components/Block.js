@@ -39,17 +39,16 @@ class Block extends Component {
     }
 
     recalculatePath({width, d}) {
-        console.log(width);
         const tokens = d.split(' ');
         const max = tokens.reduce((max, item) => {
                 if (+item > max) return +item;
                 return max;
             },
             0);
-
+        // console.log(width, max);
         let isEven = true;
         const diff =  width - max;
-        const newTokens = tokens.map(token => {
+        return tokens.map(token => {
             let comma = '';
             if(token.slice(-1) === ',') comma = ',';
             else if (isNaN(+token)) return token;
@@ -59,9 +58,17 @@ class Block extends Component {
             return token;
 
         }).reduce((acc, token) => acc + ' ' + token);
-        console.log(d);
-        console.log(newTokens);
-        return newTokens;
+    }
+
+    updateShadowRoot(elem){
+        if (elem.shadowRoot){
+            elem.shadowRoot.querySelector('.overlay').children[0].style.width = '100%';
+            const {width} = elem.getBoundingClientRect();
+            if(width < 50) return;
+            const pathElem = elem.shadowRoot.querySelector('.overlay').children[0].children[0];
+            const d = pathElem.getAttribute('d');
+            pathElem.setAttribute('d', this.recalculatePath({width, d}));
+        }
     }
 
     componentDidMount() {
@@ -69,14 +76,8 @@ class Block extends Component {
         const {col} = this.blockRef.dataset;
         this.blockRef.classList.add('block');
         this.blockRef.classList.add(`block--col-${col}`);
-        if (this.blockRef.shadowRoot){
-            this.blockRef.shadowRoot.querySelector('.overlay').children[0].style.width = '100%';
-            const {width} = this.blockRef.getBoundingClientRect();
-            const pathElem = this.blockRef.shadowRoot.querySelector('.overlay').children[0].children[0];
-            const d = pathElem.getAttribute('d');
-            pathElem.setAttribute('d', this.recalculatePath({width, d}));
-        }
 
+        this.updateShadowRoot(this.blockRef);
 
         this.subscription = this.props.initDraggable(this.blockRef);
         // TODO subscribe for drag
@@ -85,17 +86,14 @@ class Block extends Component {
     componentDidUpdate() {
         if(this.blockRef.parentNode && this.blockRef.parentNode.classList.contains('menu__tab-subsection')) return;
         console.log('componentDidUpdate',  this.blockRef);
-        const {col} = this.blockRef.dataset;
-        if (this.blockRef.shadowRoot) {
-            const {width} = this.blockRef.getBoundingClientRect();
-            const pathElem = this.blockRef.shadowRoot.querySelector('.overlay').children[0].children[0];
-            const d = pathElem.getAttribute('d');
-            pathElem.setAttribute('d', this.recalculatePath({width, d}));
-        }
 
+        const {col} = this.blockRef.dataset;
         const prevClass = [...this.blockRef.classList].find(item => item.match(/(block--col-)\w+/g));
         this.blockRef.classList.remove(prevClass);
         this.blockRef.classList.add(`block--col-${col}`);
+
+        this.updateShadowRoot(this.blockRef);
+
     }
 
     componentWillUnmount() {

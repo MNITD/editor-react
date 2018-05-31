@@ -8,6 +8,6 @@ const register = (data) => postData(`${API_ENDPOINT}/register`, data);
 const getDocuments = () => getData(`${API_ENDPOINT}/documents`);
 const createDocument = () => postData(`${API_ENDPOINT}/documents`, {name: 'New document', tree: {}});
 const getDocument = id => getData(`${API_ENDPOINT}/documents/${id}`);
-const saveDocument = (id, data) => putData(`${API_ENDPOINT}/documents/${id}`, data);
+const updateDocument = (id, data) => putData(`${API_ENDPOINT}/documents/${id}`, data);
 
-export {createDocument, getDocument, saveDocument, getDocuments, login, register};
+export {createDocument, getDocument, updateDocument, getDocuments, login, register};

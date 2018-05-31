@@ -9,13 +9,6 @@ import Block from '../components/Block';
 import '../styles/WorkArea.scss';
 
 class WorkArea extends Component {
-    constructor(props) {
-        super(props);
-        this.setRef = (elem) => {
-            this.elemRef = elem;
-        };
-    }
-
     getChildren(blocks, parentIndex = '') {
         return blocks.map((block, index) => {
                 const newIndex = `${parentIndex}${index}L`;
@@ -28,7 +21,7 @@ class WorkArea extends Component {
     getGrids(grids, parentIndex = '') {
         return grids.map((grid, index) => {
                 const newIndex = `${parentIndex}${index}L`;
-                return (<Grid key={index} index={newIndex} initGrid={::this.props.initGrid}>
+                return (<Grid key={index} index={newIndex}>
                     {this.getChildren(grid.children, newIndex)}
                 </Grid>);
             }
@@ -41,10 +34,6 @@ class WorkArea extends Component {
                 {this.getGrids(this.props.blocks)}
             </main>
         );
-    }
-
-    componentDidMount() {
-        this.props.initWorkArea(this.elemRef);
     }
 }
 

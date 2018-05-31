@@ -28,7 +28,7 @@ class App extends Component {
         const centerW = elemRect.left + window.scrollX + elemRect.width / 2;
         const {left, right, top, bottom} = workArea.getBoundingClientRect();
 
-        return (left < centerW && right > centerW) && (top < centerH && bottom > centerH)
+        return (left < centerW && right > centerW) && (top < centerH && bottom > centerH);
     }
 
     findDropCandidates(elem, droppables) {
@@ -202,7 +202,6 @@ class App extends Component {
     }
 
     dragStart(elem, {clientX, clientY}) {
-        console.log()
         // console.log(elem.parentNode.children.length);
         if (elem.parentNode.classList.contains('menu__tab-subsection')) {
             const copy = elem.cloneNode(true);
@@ -387,7 +386,8 @@ class App extends Component {
         if (resizeLine) resizeLine.parentNode.removeChild(resizeLine);
 
         const {index, side, col} = elem.dataset;
-        this.props.resizeBlock(index, col, side);
+        if(side) this.props.resizeBlock(index, col, side);
+
     }
 
     resizePredicate() {
@@ -420,28 +420,11 @@ class App extends Component {
         });
     }
 
-    initGrid(elem) {
-        if (!elem) return;
-        // const rect = elem.getBoundingClientRect();
-        // this.tempState = {...this.tempState, grids: [...this.tempState.grids, {node: elem, rect,}]};
-
-        // const parentRect = elem.getBoundingClientRect();
-        // const colWidth = 100 / 12;
-        // Array(11).fill(1).forEach((item, index) => {
-        //     const gridLine = document.createElement('div');
-        //     gridLine.style.height = parentRect.height + 'px';
-        //     gridLine.style.top = parentRect.top +'px';
-        //     gridLine.style.left = `${colWidth * (index + 1)}%`;
-        //     gridLine.classList.add('grid-line');
-        //     document.body.appendChild(gridLine);
-        // });
-    }
-
     render() {
         return (
             <div>
                 <Menu initDraggable={::this.initDraggable}/>
-                <WorkArea blocks={this.props.blocks} initWorkArea={::this.initWorkArea} initGrid={::this.initGrid}
+                <WorkArea blocks={this.props.blocks} initWorkArea={::this.initWorkArea}
                           initDraggable={::this.initDraggable}/>
             </div>
         );

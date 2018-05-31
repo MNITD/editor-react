@@ -12,11 +12,11 @@ const Root = ({store}) => (
     <Provider store={store}>
         <Router>
             <div>
-                {/*<Route path="/" exact={true} component={Main}/>*/}
+                <Route path="/" exact={true} component={Main}/>
                 {/*<Route path="/" exact={true} component={Login}/>*/}
-                <Route path="/login" component={Login}/>
-                {/*<Route path="/edit" component={App}/>*/}
-                <Route path="/" exact={true} component={App}/>
+                {/*<Route path="/login" component={Login}/>*/}
+                <Route path="/edit/:id" component={App}/>
+                {/*<Route path="/" exact={true} component={App}/>*/}
             </div>
         </Router>
         {/*<App/>*/}

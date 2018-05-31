@@ -16,7 +16,7 @@ class Main extends Component {
         return documents.map(({name, id, link}) => (
                 <li key={id} className={'main__item'}>
                     <span className={'main__name'}>{name}</span>
-                    <NavLink to={'/edit'}>Edit</NavLink>
+                    <NavLink to={`/edit/${id}`}>Edit</NavLink>
                     {link? (<NavLink to={link}>link</NavLink>): ''}
                 </li>
             )

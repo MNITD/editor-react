@@ -1,4 +1,5 @@
 const makeRequest = async (url, method, data) =>  {
+    console.log(url, method, data);
     const body = {
         body: JSON.stringify(data),
         headers: {
@@ -6,7 +7,13 @@ const makeRequest = async (url, method, data) =>  {
         },
         method,
     };
-    return await (await fetch(url, body)).json();
+    return fetch(url, body)
+        .then(res => res.json())
+        .then(data => {if(data.error) console.error(data.error); return data;});
+
+
+
+    // return await (await fetch(url, body)).json();
 };
 
 const getData = async url => await makeRequest(url, 'GET');

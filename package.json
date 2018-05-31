@@ -7,7 +7,7 @@
     "test": "mocha --require babel-register --require babel-polyfill --exit",
     "build": "MODE=prod webpack --mode production",
     "start": "webpack --mode development --watch",
-    "dev": "webpack-dev-server --mode development --output-public-path=/build/ --watch-poll",
+    "dev": "webpack-dev-server --mode development  --hot --colors --progress",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
