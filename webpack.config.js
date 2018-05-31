@@ -17,7 +17,7 @@ module.exports = {
     devtool: 'source-map',
     devServer: {
         contentBase: distPath,
-        historyApiFallback: true
+        historyApiFallback: true,
     },
     module: {
         rules: [
