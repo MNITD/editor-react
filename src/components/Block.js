@@ -72,7 +72,7 @@ class Block extends Component {
     }
 
     componentDidMount() {
-        console.log('componentDidMount', this.blockRef);
+        // console.log('componentDidMount', this.blockRef);
         const {col} = this.blockRef.dataset;
         this.blockRef.classList.add('block');
         this.blockRef.classList.add(`block--col-${col}`);
@@ -85,7 +85,7 @@ class Block extends Component {
 
     componentDidUpdate() {
         if(this.blockRef.parentNode && this.blockRef.parentNode.classList.contains('menu__tab-subsection')) return;
-        console.log('componentDidUpdate',  this.blockRef);
+        // console.log('componentDidUpdate',  this.blockRef);
 
         const {col} = this.blockRef.dataset;
         const prevClass = [...this.blockRef.classList].find(item => item.match(/(block--col-)\w+/g));

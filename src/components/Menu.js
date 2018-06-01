@@ -2,7 +2,8 @@
  * Created by bogdan on 22.02.18.
  */
 import React, {Component} from 'react';
-import {connect} from "react-redux";
+import {connect} from 'react-redux';
+import { NavLink } from 'react-router-dom';
 import BlockList from '../containers/BlockList';
 import {redoState, undoState} from '../actions/undoActions';
 // style
@@ -12,8 +13,9 @@ class Menu extends Component{
     render(){
         return (
             <nav className="menu">
-                <div className="menu__tab menu__toggle"><i className="material-icons">menu</i></div>
-
+                <div className="menu__tab menu__toggle">
+                    <NavLink  to='/' className="menu__tab-link"><i className="material-icons">menu</i></NavLink>
+                </div>
                 <div className="menu__tab">
                     <i className="material-icons">add_box</i>
                     <div className="menu__tab-container">

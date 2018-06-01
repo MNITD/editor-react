@@ -1,3 +1,5 @@
+
+
 const editorState = (reducer) => {
 
     const persistedState = {
@@ -27,9 +29,9 @@ const editorState = (reducer) => {
                 //     blockType: 'Grid',
                 //     children: [],
                 // },
-            ]
+            ],
         },
-        future: [],
+        future: []
     };
 
     return (state = persistedState, action) => {
@@ -52,7 +54,16 @@ const editorState = (reducer) => {
                     past: lastFuture ? [...past, present] : past,
                     present: lastFuture || present,
                     future: future.slice(0, future.length - 1),
-                }
+                };
+            }
+            case 'GET_DOCUMENT':{
+                const {document} = action;
+                return {
+                    ...state,
+                    past: [],
+                    future: [],
+                    present: {...present, blocks: document.tree},
+                };
             }
             default: {
                 console.log(state);

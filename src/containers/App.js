@@ -8,8 +8,11 @@ import {create} from '../lib/drag';
 import * as resize from '../lib/resize';
 import keyHandler from '../lib/keyHandler';
 import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
 import {addBlock, deleteBlock, moveBlock, resizeBlock} from '../actions/blockActions';
 import {redoState, undoState} from '../actions/undoActions';
+import {getDocument} from '../actions/fetchActions';
+
 //style
 import '../styles/DragNDrop.scss';
 import '../styles/Resize.scss';
@@ -19,6 +22,9 @@ class App extends Component {
         super(props);
 
         this.tempState = {draggables: [], enableDragging: true, enableResizing: true};
+        const {match: {params}} = props;
+        // console.log(props);
+        props.getDocument(params.id);
         keyHandler(props);
     }
 
@@ -51,10 +57,10 @@ class App extends Component {
             if (left < elemRect.left)
                 return {
                     area: right - elemRect.left,
-                    direction: elemCenter > center && index !== 0 ? 'after' : 'before'
+                    direction: elemCenter > center && index !== 0 ? 'after' : 'before',
                 };
 
-            return {area: elemRect.right - left, direction: elemCenter < center ? 'before' : 'after'}
+            return {area: elemRect.right - left, direction: elemCenter < center ? 'before' : 'after'};
         };
         return candidates
             .map((item, index) => ({node: item, rect: item.getBoundingClientRect(), index}))
@@ -65,7 +71,7 @@ class App extends Component {
                 return {node, rect};
             })
             .filter(({rect: {left, right}}) => (
-                (left < elemRect.left && right > elemRect.left) || (left < elemRect.right && right > elemRect.right))
+                (left < elemRect.left && right > elemRect.left) || (left < elemRect.right && right > elemRect.right)),
             )
             .map((item) => ({...item, ...getArea(item)}))
             .sort((a, b) => b.area - a.area);
@@ -155,7 +161,7 @@ class App extends Component {
                             .slice(-2)
                             .reverse()
                             .find(
-                                (child) => child !== elem
+                                (child) => child !== elem,
                             );
                         if (child) preview.node.style.left = child.getBoundingClientRect().right - previewOffset + 'px';
                     }
@@ -180,7 +186,7 @@ class App extends Component {
                 const {bottom} = elem.getBoundingClientRect();
                 if (bottom > lastChildRect.bottom) {
                     preview.node.style.top = lastChildRect.bottom - 2 * previewOffset + 'px';
-                    preview.parentIndex = childrenLen + 'L'
+                    preview.parentIndex = childrenLen + 'L';
                 }
                 else
                     preview.node.style.top = workAreaRect.top + 'px';
@@ -386,7 +392,7 @@ class App extends Component {
         if (resizeLine) resizeLine.parentNode.removeChild(resizeLine);
 
         const {index, side, col} = elem.dataset;
-        if(side) this.props.resizeBlock(index, col, side);
+        if (side) this.props.resizeBlock(index, col, side);
 
     }
 
@@ -431,9 +437,14 @@ class App extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = ({editorState}) => {
     // console.log(state);
-    return {blocks: [...state.present.blocks]};
+    return {blocks: [...editorState.present.blocks]};
 };
 
-export default connect(mapStateToProps, {addBlock, moveBlock, deleteBlock, resizeBlock, undoState, redoState})(App);
+export default connect(mapStateToProps, (dispatch) => {
+    return {
+        ...bindActionCreators({addBlock, moveBlock, deleteBlock, resizeBlock, undoState, redoState}, dispatch),
+        getDocument: getDocument(dispatch),
+    };
+})(App);

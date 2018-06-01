@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import { NavLink } from 'react-router-dom';
-import {getDocuments} from '../api';
+import {connect} from 'react-redux';
+import {getDocuments} from '../actions/fetchActions';
 import Header from './Header';
 
 import '../styles/Main.scss';
@@ -8,11 +9,10 @@ import '../styles/Main.scss';
 class Main extends Component {
     constructor(props){
         super(props);
-        this.state = {documents: []};
-        getDocuments().then(documents => this.setState({...this.state, documents}));
+        props.getDocuments();//.then(documents => this.setState({...this.state, documents}));
     }
     getDocumentList(){
-        const {documents} = this.state;
+        const {documents} = this.props;
         return documents.map(({name, id, link}) => (
                 <li key={id} className={'main__item'}>
                     <span className={'main__name'}>{name}</span>
@@ -34,4 +34,9 @@ class Main extends Component {
     }
 }
 
-export default Main;
+const mapStateToProps = ({documents: {all}}) => {
+    // console.log(state);
+    return {documents: all};
+};
+
+export default connect(mapStateToProps, (dispatch) => ({getDocuments: getDocuments(dispatch)}) )(Main);
