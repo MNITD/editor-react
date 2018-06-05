@@ -46,19 +46,18 @@ const configureStore = () => {
             },
             future: [],
         },
-        documents: {},
     };
     // console.log(persistedState);
     const store = createStore(reducer, persistedState, middleware);
 
     store.subscribe(throttle(() => {
-        console.log('saveState');
+        // console.log('saveState');
         saveState(store.getState());
     }, 1000));
 
     store.subscribe(debounce(() => {
         const {editorState, documents} = store.getState();
-        console.log('updateDocument', editorState.present.blocks);
+        // console.log('updateDocument', editorState.present.blocks);
         api.updateDocument(documents.current, {tree:editorState.present.blocks});
     }, 5000));
 

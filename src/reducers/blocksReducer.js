@@ -8,7 +8,7 @@ const getNode = (state, path) => {
     // TODO make deep copy with
     let currentNode = state[path[0]];
     if(path.length > 1)
-        path.slice(1).forEach((index) => {currentNode  = currentNode.children[index]});
+        path.slice(1).forEach((index) => { currentNode  = currentNode.children[index]; });
     return currentNode;
     //TODO replace children of currentNode's parent with copy
 };
@@ -70,7 +70,7 @@ const checkAndRemove = (state, parentPath) => {
 };
 
 const blocks = (state=[], action) =>{
-    console.log(state);
+    // console.log(state);
     switch (action.type){
         case 'ADD_BLOCK':{
             const newState = JSON.parse(JSON.stringify(state));///[...state];

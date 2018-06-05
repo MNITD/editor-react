@@ -31,7 +31,7 @@ const editorState = (reducer) => {
                 // },
             ],
         },
-        future: []
+        future: [],
     };
 
     return (state = persistedState, action) => {
@@ -66,7 +66,7 @@ const editorState = (reducer) => {
                 };
             }
             default: {
-                console.log(state);
+                // console.log(state);
 
                 const newPresent = reducer(present, action);
                 if (newPresent === present){
@@ -83,7 +83,7 @@ const editorState = (reducer) => {
                 }
             }
         }
-    }
+    };
 };
 
 export default editorState;
