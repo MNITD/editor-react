@@ -1,7 +1,6 @@
 import {getData, postData, putData, deleteData } from './api';
 
-const port = process.env.PORT || 9000;
-const API_ENDPOINT = `http://localhost:${port}/api`;
+const API_ENDPOINT = process.env.MODE === 'prod'? 'https://mnitd-editor.herokuapp.com/api': 'http://localhost:9000/api';
 
 const serializeTree = (data) =>  { const tree = JSON.stringify(data.tree); return {...data, tree};};
 const deserializeTree = (data) =>  { const tree = JSON.parse(data.tree); return {...data, tree};};
