@@ -12,6 +12,7 @@ import {bindActionCreators} from 'redux';
 import {addBlock, deleteBlock, moveBlock, resizeBlock} from '../actions/blockActions';
 import {redoState, undoState} from '../actions/undoActions';
 import {getDocument} from '../actions/fetchActions';
+import {updateShadowRoot} from '../utils/shadowRoot';
 
 //style
 import '../styles/DragNDrop.scss';
@@ -90,7 +91,7 @@ class App extends Component {
         return preview;
     }
 
-    calulateColNum({node}, elem) {
+    calculateColNum({node}, elem) {
         const totalColNum = 12;
         const divisor = node.children.length;
         return Math.round(totalColNum / (node === elem.parentNode ? divisor : divisor + 1));
@@ -113,7 +114,7 @@ class App extends Component {
         if (dropCandidate) {
             preview.node = this.createPreview(dropCandidate);
             preview.parentIndex = dropCandidate.node.dataset.index;
-            preview.colNum = this.calulateColNum(dropCandidate, elem);
+            preview.colNum = this.calculateColNum(dropCandidate, elem);
 
             const parentNode = dropCandidate.node;
 
@@ -302,9 +303,12 @@ class App extends Component {
         elem.classList.remove('draggable--moved');
     }
 
+
     dragPredicate() {
         return this.tempState.enableDragging;
     }
+
+    // ================== Resize =================//
 
     moveResizeLine(x) {
         const resizeLine = document.querySelector('.resize-line');
@@ -353,6 +357,9 @@ class App extends Component {
                 neighbour.classList.remove(`block--col-${neighbourCol}`);
                 neighbour.classList.add(`block--col-${newNeighbourCol}`);
                 neighbour.dataset.col = newNeighbourCol;
+
+                updateShadowRoot(elem);
+                updateShadowRoot(neighbour);
             }
         }
     }

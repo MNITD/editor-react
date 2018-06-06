@@ -15,9 +15,7 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
 
     const removeResizeLine = () => {
         if(resizeInAction) return;
-        console.log('removeResizeLine');
         const resizeLine = document.querySelector('.resize-line');
-        console.log(resizeLine);
         if (resizeLine) resizeLine.parentNode.removeChild(resizeLine);
     };
 

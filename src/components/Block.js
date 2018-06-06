@@ -3,6 +3,8 @@
  */
 import React, {Component} from 'react';
 import 'wired-elements';
+import {updateShadowRoot} from '../utils/shadowRoot';
+
 // style
 import '../styles/Block.scss';
 
@@ -38,38 +40,7 @@ class Block extends Component {
         );
     }
 
-    recalculatePath({width, d}) {
-        const tokens = d.split(' ');
-        const max = tokens.reduce((max, item) => {
-                if (+item > max) return +item;
-                return max;
-            },
-            0);
-        // console.log(width, max);
-        let isEven = true;
-        const diff =  width - max;
-        return tokens.map(token => {
-            let comma = '';
-            if(token.slice(-1) === ',') comma = ',';
-            else if (isNaN(+token)) return token;
 
-            isEven = !isEven;
-            if(!isEven && parseFloat(token) > 10)  return (parseFloat(token) + diff) + comma ;
-            return token;
-
-        }).reduce((acc, token) => acc + ' ' + token);
-    }
-
-    updateShadowRoot(elem){
-        if (elem.shadowRoot){
-            elem.shadowRoot.querySelector('.overlay').children[0].style.width = '100%';
-            const {width} = elem.getBoundingClientRect();
-            if(width < 50) return;
-            const pathElem = elem.shadowRoot.querySelector('.overlay').children[0].children[0];
-            const d = pathElem.getAttribute('d');
-            pathElem.setAttribute('d', this.recalculatePath({width, d}));
-        }
-    }
 
     componentDidMount() {
         // console.log('componentDidMount', this.blockRef);
@@ -77,7 +48,7 @@ class Block extends Component {
         this.blockRef.classList.add('block');
         this.blockRef.classList.add(`block--col-${col}`);
 
-        this.updateShadowRoot(this.blockRef);
+        updateShadowRoot(this.blockRef);
 
         this.subscription = this.props.initDraggable(this.blockRef);
         // TODO subscribe for drag
@@ -92,7 +63,7 @@ class Block extends Component {
         this.blockRef.classList.remove(prevClass);
         this.blockRef.classList.add(`block--col-${col}`);
 
-        this.updateShadowRoot(this.blockRef);
+        updateShadowRoot(this.blockRef);
 
     }
 
