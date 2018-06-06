@@ -1,27 +1,52 @@
 import {fromEvent} from 'most';
-import drag from "./drag";
 
 const mouseup = fromEvent('mouseup', document);
+let resizeInAction = false;
 
 const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, resizeReady}) => {
     const mousemove = fromEvent('mousemove', document);
     const mousemoveRezisable = fromEvent('mousemove', resizable);
     const mousedown = fromEvent('mousedown', resizable);
 
-    const filterCursor = ({clientX, clientY}) => {
+    const filterCursor = ({clientX}, offset = 12) => {
         const {left, right} = resizable.getBoundingClientRect();
-        const offset = 12;
         return (clientX <= left + offset) || (clientX >= right - offset);
+    };
+
+    const removeResizeLine = () => {
+        if(resizeInAction) return;
+        console.log('removeResizeLine');
+        const resizeLine = document.querySelector('.resize-line');
+        console.log(resizeLine);
+        if (resizeLine) resizeLine.parentNode.removeChild(resizeLine);
+    };
+
+    const createResizeLine = (elem, {x}) => {
+        if (document.querySelector('.resize-line')) return;
+        const elemRect = elem.getBoundingClientRect();
+        const resizeLine = document.createElement('div');
+        resizeLine.classList.add('resize-line');
+        resizeLine.style.height = `${elemRect.height}px`;
+        resizeLine.style.top = `${elemRect.top}px`;
+        resizeLine.style.left = `${x}px`;
+        resizeLine.style.cursor = 'ew-resize';
+        document.body.appendChild(resizeLine);
     };
 
     const resizing = mousemoveRezisable
         .filter(resizePredicate)
         .tap(() => {
+            removeResizeLine();
             resizable.style.cursor = 'initial';
             resizeReady(false);
         })
         .filter(filterCursor)
-        .tap(() => {
+        .tap(({clientX}, offset = 12) => {
+            const {left, right} = resizable.getBoundingClientRect();
+            if (clientX <= left + offset) createResizeLine(resizable, {x: left});
+            if (clientX >= right - offset) createResizeLine(resizable, {x: right});
+
+            // console.log('pos', pos);
             resizable.style.cursor = 'ew-resize';
             resizeReady(true);
         })
@@ -32,11 +57,13 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
                 .chain(() => {
                     return mousemove
                         .take(1)
-                        .tap(( {clientX, clientY}) => resizeStart(resizable, {x: clientX, y: clientY}))
+                        .tap(()=>{ resizeInAction = true; })
+                        .tap(({clientX, clientY}) => resizeStart(resizable, {x: clientX, y: clientY}))
                         .concat(mousemove.skip(1))
                         .tap(mm => mm.preventDefault()) // prevent text selecting
                         .until(mouseup.tap((pos) => {
-                            resizeEnd(resizable, pos)
+                            resizeInAction = false;
+                            resizeEnd(resizable, pos);
                         }))
                         // .filter(filterCursor)
                         .scan(({x, y}, {clientX, clientY}) => {
@@ -44,9 +71,9 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
                             const side = clientX <= left + width / 2 ? 'left' : 'right';
                             if (x && clientX < x) return {direction: -1, x: clientX, y: clientY, side};
                             if (x && clientX > x) return {direction: 1, x: clientX, y: clientY, side};
-                            return {direction: 0, x: clientX, y: clientY, side}
-                        }, {}) //{x: 0, y: 0, direction: 0}
-                })
+                            return {direction: 0, x: clientX, y: clientY, side};
+                        }, {}); //{x: 0, y: 0, direction: 0}
+                });
 
         });
 
@@ -54,9 +81,9 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
         .subscribe({
             next(pos) {
                 console.log(pos);
-                onResize(resizable, pos)
-            }
-        })
+                onResize(resizable, pos);
+            },
+        });
 
 };
 

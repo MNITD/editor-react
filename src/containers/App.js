@@ -363,13 +363,7 @@ class App extends Component {
 
     resizeStart(elem, pos) {
         console.log('resizeStart');
-        const elemRect = elem.getBoundingClientRect();
-        const resizeLine = document.createElement('div');
-        resizeLine.classList.add('resize-line');
-        resizeLine.style.height = `${elemRect.height}px`;
-        resizeLine.style.top = `${elemRect.top}px`;
-        resizeLine.style.left = `${pos.x}px`;
-        document.body.appendChild(resizeLine);
+        [...elem.parentNode.children].forEach(elem => elem.classList.add('droppable--outlined'));
     }
 
     onResize(elem, {direction, side, x}) {
@@ -387,6 +381,8 @@ class App extends Component {
         console.log('resizeEnd');
 
         console.log(elem.dataset.col);
+
+        [...elem.parentNode.children].forEach(elem => elem.classList.remove('droppable--outlined'));
 
         const resizeLine = document.querySelector('.resize-line');
         if (resizeLine) resizeLine.parentNode.removeChild(resizeLine);
