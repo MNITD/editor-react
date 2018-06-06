@@ -26,18 +26,18 @@ class Menu extends Component{
                     </div>
                 </div>
 
-                <div className="menu__tab">
-                    <a href="" className="menu__tab-link">
-                       <span className="menu__badge" data-badge="1">
-                            <i className="material-icons">notifications</i>
-                        </span>
-                        <div className="menu__tab-container">
-                            <div className="menu__tab-content">
-                                <h1 className="menu__tab-heading">Notifications</h1>
-                            </div>
-                        </div>
-                    </a>
-                </div>
+                {/*<div className="menu__tab">*/}
+                    {/*<a href="" className="menu__tab-link">*/}
+                       {/*<span className="menu__badge" data-badge="1">*/}
+                            {/*<i className="material-icons">notifications</i>*/}
+                        {/*</span>*/}
+                        {/*<div className="menu__tab-container">*/}
+                            {/*<div className="menu__tab-content">*/}
+                                {/*<h1 className="menu__tab-heading">Notifications</h1>*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
+                    {/*</a>*/}
+                {/*</div>*/}
 
                 <div className="menu__tab" onClick={this.props.undoState}>
                         <i className="material-icons">undo</i>
@@ -56,36 +56,36 @@ class Menu extends Component{
                         </div>
                 </div>
 
-                <div className="menu__tab">
-                    <a href="" className="menu__tab-link">
-                        <i className="material-icons">visibility</i>
-                        <div className="menu__tab-container">
-                            <div className="menu__tab-content">
-                                <h1 className="menu__tab-heading">Preview</h1>
-                            </div>
-                        </div>
-                    </a>
-                </div>
+                {/*<div className="menu__tab">*/}
+                    {/*<a href="" className="menu__tab-link">*/}
+                        {/*<i className="material-icons">visibility</i>*/}
+                        {/*<div className="menu__tab-container">*/}
+                            {/*<div className="menu__tab-content">*/}
+                                {/*<h1 className="menu__tab-heading">Preview</h1>*/}
+                            {/*</div>*/}
+                        {/*</div>*/}
+                    {/*</a>*/}
+                {/*</div>*/}
 
-                <div className="menu__tab">
-                    <i className="material-icons">settings</i>
-                    <div className="menu__tab-container">
-                        <div className="menu__tab-content">
-                            <h1 className="menu__tab-heading">Settings</h1>
-                            <ul className="menu__tab-list menu__tab-list--primary">
-                                <li className="menu__tab-section">
-                                    <a className="menu__tab-section-title" href="">About</a>
-                                </li>
-                                <li className="menu__tab-section" >
-                                    <a className="menu__tab-section-title" href="">Help</a>
-                                </li>
-                                <li className="menu__tab-section menu__tab-section--top-separator">
-                                    <span className="menu__tab-section-title">Log out</span>
-                                </li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
+                {/*<div className="menu__tab">*/}
+                    {/*<i className="material-icons">settings</i>*/}
+                    {/*<div className="menu__tab-container">*/}
+                        {/*<div className="menu__tab-content">*/}
+                            {/*<h1 className="menu__tab-heading">Settings</h1>*/}
+                            {/*<ul className="menu__tab-list menu__tab-list--primary">*/}
+                                {/*<li className="menu__tab-section">*/}
+                                    {/*<a className="menu__tab-section-title" href="">About</a>*/}
+                                {/*</li>*/}
+                                {/*<li className="menu__tab-section" >*/}
+                                    {/*<a className="menu__tab-section-title" href="">Help</a>*/}
+                                {/*</li>*/}
+                                {/*<li className="menu__tab-section menu__tab-section--top-separator">*/}
+                                    {/*<span className="menu__tab-section-title">Log out</span>*/}
+                                {/*</li>*/}
+                            {/*</ul>*/}
+                        {/*</div>*/}
+                    {/*</div>*/}
+                {/*</div>*/}
 
             </nav>
         );
