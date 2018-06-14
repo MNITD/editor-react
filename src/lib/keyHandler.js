@@ -44,11 +44,9 @@ const undo = keydown
 
 export default ({undoState, redoState}) => {
     undo.observe(() => {
-        console.log('undo');
         undoState()
     });
     redo.observe(() => {
-        console.log('redo');
         redoState()
     });
 }

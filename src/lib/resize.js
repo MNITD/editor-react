@@ -44,7 +44,6 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
             if (clientX <= left + offset) createResizeLine(resizable, {x: left});
             if (clientX >= right - offset) createResizeLine(resizable, {x: right});
 
-            // console.log('pos', pos);
             resizable.style.cursor = 'ew-resize';
             resizeReady(true);
         })
@@ -77,10 +76,7 @@ const create = (resizable, {onResize, resizeStart, resizeEnd, resizePredicate, r
 
     return resizing
         .subscribe({
-            next(pos) {
-                console.log(pos);
-                onResize(resizable, pos);
-            },
+            next(pos) {onResize(resizable, pos) },
         });
 
 };

@@ -1,77 +1,47 @@
-/**
- * Created by bogdan on 22.02.18.
- */
-import React, {Component} from 'react';
-// import 'wired-elements';
-import {updateShadowRoot} from '../utils/shadowRoot';
-
-// style
-import '../styles/Block.scss';
+import React, { Component } from "react"
+import "../styles/Block.scss"
 
 class Block extends Component {
-    constructor(props) {
-        super(props);
-        this.setRef = (elem) => {
-            this.blockRef = elem;
-        };
-    }
+  componentDidMount() {
+    const { col } = this.blockRef.dataset
+    this.blockRef.classList.add("block")
+    this.blockRef.classList.add(`block--col-${col}`)
 
-    render() {
-        const {index, data: {blockType, col}} = this.props;
+    this.subscription = this.props.initDraggable(this.blockRef)
+  }
 
-        const wiredComponets = {
-            WiredButton: 'wired-button',
-            WiredInput: 'wired-input',
-        };
+  componentDidUpdate() {
+    if (this.blockRef.parentNode && this.blockRef.parentNode.classList.contains("menu__tab-subsection")) return
 
-        const WiredElement = wiredComponets[blockType];
-        if (WiredElement) {
-            return (
-                <WiredElement data-index={index} data-type={blockType} data-col={col} ref={this.setRef}>
-                    {this.props.children}
-                </WiredElement>
-            );
-        }
+    const { col } = this.blockRef.dataset
+    const prevClass = [...this.blockRef.classList].find(item => item.match(/(block--col-)\w+/g))
+    this.blockRef.classList.remove(prevClass)
+    this.blockRef.classList.add(`block--col-${col}`)
+  }
 
-        return (
-            <div data-index={index} data-col={col} data-type={blockType} ref={this.setRef}>
-                {this.props.children}
-            </div>
-        );
-    }
+  componentWillUnmount() {
+    this.subscription.unsubscribe()
+  }
 
+  render() {
+    const {
+      index,
+      data: { blockType, col },
+    } = this.props
 
-
-    componentDidMount() {
-        // console.log('componentDidMount', this.blockRef);
-        const {col} = this.blockRef.dataset;
-        this.blockRef.classList.add('block');
-        this.blockRef.classList.add(`block--col-${col}`);
-
-        updateShadowRoot(this.blockRef);
-
-        this.subscription = this.props.initDraggable(this.blockRef);
-        // TODO subscribe for drag
-    }
-
-    componentDidUpdate() {
-        if(this.blockRef.parentNode && this.blockRef.parentNode.classList.contains('menu__tab-subsection')) return;
-        // console.log('componentDidUpdate',  this.blockRef);
-
-        const {col} = this.blockRef.dataset;
-        const prevClass = [...this.blockRef.classList].find(item => item.match(/(block--col-)\w+/g));
-        this.blockRef.classList.remove(prevClass);
-        this.blockRef.classList.add(`block--col-${col}`);
-
-        updateShadowRoot(this.blockRef);
-
-    }
-
-    componentWillUnmount() {
-        console.log('unmount');
-        this.subscription.unsubscribe();
-        //TODO unsubscribe from drag
-    }
+    return (
+      <div
+        data-index={index}
+        data-col={col}
+        data-type={blockType}
+        ref={elem => {
+          this.blockRef = elem
+        }}
+      >
+        {this.props.children}
+      </div>
+    )
+  }
 }
 
-export default Block;
+export default Block

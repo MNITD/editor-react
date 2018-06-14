@@ -15,7 +15,11 @@
     "type": "git",
     "url": "git+https://github.com/MNITD/editor-react.git"
   },
-  "keywords": ["react", "editor", "constructor"],
+  "keywords": [
+    "react",
+    "editor",
+    "constructor"
+  ],
   "author": "MNITD",
   "license": "ISC",
   "bugs": {
@@ -70,7 +74,6 @@
     "recompose": "^0.27.1",
     "redux": "^3.7.2",
     "redux-thunk": "^2.3.0",
-    "uuid": "^3.2.1",
-    "wired-elements": "^0.5.8"
+    "uuid": "^3.2.1"
   }
 }

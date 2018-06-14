@@ -12,7 +12,6 @@ class Login extends React.Component {
 
     logIn({ login, password }).then(({ error, token }) => {
       if (error) {
-        console.log(error)
         return
       }
       localStorage.setItem("token", token)
@@ -26,7 +25,6 @@ class Login extends React.Component {
       target: { value },
     },
   ) {
-    console.log(property, value)
     this.setState({ [property]: value })
   }
 

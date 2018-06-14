@@ -11,11 +11,10 @@ class Register extends React.Component {
         const {login, password} = this.state;
         const {history} = this.props;
 
-        register({login, password}).then(({error, token}) => {if(error) {console.log(error); return;}localStorage.setItem('token', token); history.push('/');}); // TODO save credentials to storage
+        register({login, password}).then(({error, token}) => {if(error) { return;}localStorage.setItem('token', token); history.push('/');}); // TODO save credentials to storage
     };
 
     handleChange(property, {target: {value}}) {
-        console.log(property, value);
         this.setState({[property]: value});
     }
 

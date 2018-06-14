@@ -19,8 +19,6 @@ const create = (draggable, {onDrag, dragStart, dragEnd, dragPredicate}) => {
 
     const dragging = mousedown
         .filter(dragPredicate)
-        // .takeWhile(dragPredicate)
-        .tap(() => console.log(window.scrollX, window.scrollY))
         .map(({clientX, clientY}) => [clientX, clientY])
         .chain(([startX, startY]) => {
             const startLeft = parseInt(draggable.style.left, 10) || 0;

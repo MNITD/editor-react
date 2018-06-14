@@ -1,30 +1,28 @@
-import React, { Component } from "react"
+import React from "react"
 import { NavLink } from "react-router-dom"
 import { connect } from "react-redux"
 import { getDocuments } from "../actions/fetchActions"
-import Header from "./Header"
+import Navigation from "./Navigation"
 
 import "../styles/Main.scss"
 import { compose } from "ramda"
 import { getAllDocuments } from "../reducers"
 import { lifecycle } from "recompose"
 
-const DocumentList = ({ documents }) => (
-  <ul className={"main__list"}>
-    {documents.map(({ name, id, link }) => (
-      <li key={id} className={"main__item"}>
-        <span className={"main__name"}>{name}</span>
-        <NavLink to={`/edit/${id}`}>Edit</NavLink>
+const DocumentItem = ({ name, id }) => (
+  <div className={"main__item"}>
+    <span className={"main__name"}>{name}</span>
+    <NavLink to={`/edit/${id}`}>Edit</NavLink>
+  </div>
+)
 
-        {link ? <NavLink to={link}>link</NavLink> : ""}
-      </li>
-    ))}
-  </ul>
+const DocumentList = ({ documents }) => (
+  <div className={"main__list"}>{documents.map(({ name, id }) => <DocumentItem name={name} id={id} />)}</div>
 )
 
 const Main = ({ documents }) => (
   <div className={"main"}>
-    <Header />
+    <Navigation />
     <DocumentList documents={documents} />
   </div>
 )
@@ -34,9 +32,10 @@ const enhance = compose(
     state => ({ documents: getAllDocuments(state) }), //
     { getDocuments },
   ),
+
   lifecycle({
     componentWillMount() {
-      this.props.getDocuments() //TODO: fix it
+      this.props.getDocuments()
     },
   }),
 )
