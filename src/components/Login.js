@@ -1,7 +1,7 @@
 import React from 'react';
 
 import '../styles/Login.scss';
-import {login} from '../api';
+import {login as logIn} from '../api';
 
 
 class Login extends React.Component {
@@ -9,10 +9,12 @@ class Login extends React.Component {
         event.preventDefault();
         const {login, password} = this.state;
 
-        login({login, password}); // TODO save credentials to storage
+
+        logIn({login, password}); // TODO save credentials to storage
     };
 
     handleChange(property, {target: {value}}) {
+        console.log(property, value);
         this.setState({[property]: value});
     }
 

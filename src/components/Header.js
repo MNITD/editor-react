@@ -7,7 +7,7 @@ import '../styles/Header.scss';
 
 export default  withRouter(({history}) => (
     <header className={'header'}>
-        <button onClick={() => {createDocument().then(({id})=>history.push(`/edit/${id}`))}}>New</button>
+        <button onClick={() => {createDocument().then(({id})=>history.push(`/edit/${id}`));}}>New</button>
         <NavLink to={'/login'} className={'header__login-btn'}>Login</NavLink>
     </header>
 ));

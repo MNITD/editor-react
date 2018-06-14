@@ -14,7 +14,7 @@ const Root = ({store}) => (
             <div>
                 <Route path="/" exact={true} component={Main}/>
                 {/*<Route path="/" exact={true} component={Login}/>*/}
-                {/*<Route path="/login" component={Login}/>*/}
+                <Route path="/login" component={Login}/>
                 <Route path="/edit/:id" component={App}/>
                 {/*<Route path="/" exact={true} component={App}/>*/}
             </div>
