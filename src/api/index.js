@@ -1,7 +1,7 @@
 import {getData, postData, putData, deleteData } from './api';
 
-// const API_ENDPOINT = 'https://mnitd-editor.herokuapp.com/api';// 'http://localhost:9000/api';
-const API_ENDPOINT = 'http://localhost:9000/api';
+const API_ENDPOINT = 'https://mnitd-editor.herokuapp.com/api';// 'http://localhost:9000/api';
+// const API_ENDPOINT = 'http://localhost:9000/api';
 
 const serializeTree = (data) =>  { const tree = JSON.stringify(data.tree); return {...data, tree};};
 const deserializeTree = (data) =>  { const tree = JSON.parse(data.tree); return {...data, tree};};
