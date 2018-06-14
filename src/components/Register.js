@@ -1,37 +1,45 @@
-import React from 'react';
+import React from "react"
 
-import '../styles/Login.scss';
-import {register} from '../api';
-import {withRouter} from 'react-router-dom';
+import "../styles/Login.scss"
+import { register } from "../api"
+import { withRouter } from "react-router-dom"
+import { compose } from "ramda"
+import { withHandlers, withState } from "recompose"
 
+const Register = ({ setLogin, setPassword, handleSubmit }) => (
+  <form onSubmit={handleSubmit} className={"login"}>
+    <p>Register</p>
+    <label className="login__label">
+      Login
+      <input name="login" type="text" onChange={({ target }) => setLogin(target.value)} />
+    </label>
 
-class Register extends React.Component {
-    handleSubmit(event) {
-        event.preventDefault();
-        const {login, password} = this.state;
-        const {history} = this.props;
+    <label className="login__label">
+      Password
+      <input name="password" type="password" onChange={({ target }) => setPassword(target.value)} />
+    </label>
 
-        register({login, password}).then(({error, token}) => {if(error) { return;}localStorage.setItem('token', token); history.push('/');}); // TODO save credentials to storage
-    };
+    <button className="login__btn" type="submit">
+      Register
+    </button>
+  </form>
+)
 
-    handleChange(property, {target: {value}}) {
-        this.setState({[property]: value});
-    }
+const enhance = compose(
+  withRouter,
+  withState("login", "setLogin", ""),
+  withState("password", "setPassword", ""),
+  withHandlers({
+    handleSubmit: ({ login, password, history }) => async event => {
+      event.preventDefault()
 
-    render() {
-        return <div className={'login'}>
-            <form onSubmit={::this.handleSubmit}>
-                <p>Register</p>
-                <label className='login__label' htmlFor="login">Login</label>
-                <input id='login' name='login' type='text' onChange={this.handleChange.bind(this, 'login')}/>
-                <label className='login__label' htmlFor="password">Password</label>
-                <input id='password' name='password' type='password'
-                       onChange={this.handleChange.bind(this, 'password')}/>
+      // TODO save credentials to storage
+      const { error, token } = await register({ login, password })
+      if (error) return
+      localStorage.setItem("token", token)
+      history.push("/")
+    },
+  }),
+)
 
-                <button className='login__btn' type='submit'>Register</button>
-            </form>
-        </div>;
-    };
-}
-
-export default  withRouter(Register);
+export default enhance(Register)

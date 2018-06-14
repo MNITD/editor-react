@@ -1,6 +1,3 @@
-/**
- * Created by bogdan on 22.02.18.
- */
 import React, { Component } from "react"
 import WorkArea from "./WorkArea"
 import Menu from "./Menu"
@@ -9,7 +6,6 @@ import * as resize from "../lib/resize"
 import keyHandler from "../lib/keyHandler"
 import { connect } from "react-redux"
 import { addBlock, deleteBlock, moveBlock, resizeBlock } from "../actions/blockActions"
-import { redoState, undoState } from "../actions/undoActions"
 import { getDocument } from "../actions/fetchActions"
 
 //style
@@ -62,6 +58,7 @@ class Editor extends Component {
 
       return { area: elemRect.right - left, direction: elemCenter < center ? "before" : "after" }
     }
+
     return candidates
       .map((item, index) => ({ node: item, rect: item.getBoundingClientRect(), index }))
       .map(({ node, rect }) => {
@@ -125,6 +122,7 @@ class Editor extends Component {
           // parentNode.insertBefore(preview, node);
           break
         }
+
         case "after": {
           const nodeRect = node.getBoundingClientRect()
           preview.node.style.left = nodeRect.right - previewOffset + "px"
@@ -133,6 +131,7 @@ class Editor extends Component {
           // insertAfter(preview, node);
           break
         }
+
         case "beforeV": {
           const nodeRect = dropCandidate.node.getBoundingClientRect()
           preview.node = this.createPreview({ rect: workAreaRect }, false)
@@ -142,6 +141,7 @@ class Editor extends Component {
           preview.node.style.top = nodeRect.top - 2 * previewOffset + "px"
           break
         }
+
         case "afterV": {
           const nodeRect = dropCandidate.node.getBoundingClientRect()
           preview.node = this.createPreview({ rect: workAreaRect }, false)
@@ -154,6 +154,7 @@ class Editor extends Component {
           preview.node.style.top = nodeRect.bottom - 2 * previewOffset + "px"
           break
         }
+
         default: {
           const parentRect = parentNode.getBoundingClientRect()
           preview.node.style.left = parentRect.left - previewOffset + "px"
@@ -215,10 +216,11 @@ class Editor extends Component {
     elem.innerText = elem.dataset.type
 
     if (elem.dataset.type === "Text")
-      this.tempState.draggableContent =
-        "lorem lorem kfs ekw sldk sldk .d ksld ksd." +
-        "skldklorem lorem kfs ekw sldk sldk .d ksld ksd. skldk lorem lorem kfs ekw sldk sldk .d ksld ksd. skldk lorem" +
-        "lorem kfs ekw sldk sldk .d ksld ksd. skldk "
+      this.tempState.draggableContent = `
+      lorem lorem kfs ekw sldk sldk .d ksld ksd.
+      skldklorem lorem kfs ekw sldk sldk .d ksld ksd. skldk lorem lorem kfs ekw sldk sldk .d ksld ksd. skldk lorem
+      lorem kfs ekw sldk sldk .d ksld ksd. skldk
+      `
 
     if (elem.dataset.type === "Empty") this.tempState.draggableContent = ""
 
@@ -318,9 +320,7 @@ class Editor extends Component {
     const dif = x - parentRect.left - prevSiblingColWidth - (side === "right" ? elemCol * colWidth : 0)
     const movementColNum = Math.floor(Math.abs(dif) / colWidth)
 
-
     if (movementColNum > 0) {
-
       const getSibling = (elem, side) => (side === "left" ? elem.previousSibling : elem.nextSibling)
       const neighbour = getSibling(elem, side)
 
@@ -338,9 +338,6 @@ class Editor extends Component {
         neighbour.classList.remove(`block--col-${neighbourCol}`)
         neighbour.classList.add(`block--col-${newNeighbourCol}`)
         neighbour.dataset.col = newNeighbourCol
-
-        updateShadowRoot(elem)
-        updateShadowRoot(neighbour)
       }
     }
   }
@@ -414,7 +411,5 @@ export default connect(({ editorState }) => ({ blocks: [...editorState.present.b
   moveBlock,
   deleteBlock,
   resizeBlock,
-  undoState,
-  redoState,
   getDocument,
 })(Editor)

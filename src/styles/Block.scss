@@ -1,30 +1,31 @@
-.block{
-  //margin: 4px 0; /*??*/
-  //padding: 8px;
+.block {
+  * {
+    user-select: none;
+  }
+
   height: inherit;
-  //background-color: lightgray;
-  color:  var(--color-menu-text);
+
+  color: var(--color-menu-text);
   font-size: 14px;
-  //height: 24px;
+
   line-height: inherit;
   padding: 0 12px;
   min-width: 16px;
-  //border-radius: 4px;
+
   user-select: none;
   cursor: default;
   border: none;
   display: block;
-  //box-shadow: inset 5px 0 0 0 yellow;
-  transition: width 0.5s ease-out;
-  //flex: 1;
 
-  @for $i from 1 through 12{
-    &--col-#{$i}{
-      width:(100% / 12 * $i);
+  transition: width 0.5s ease-out;
+
+  @for $i from 1 through 12 {
+    &--col-#{$i} {
+      width: (100% / 12 * $i);
     }
   }
+
   &[data-index] {
     padding: 12px;
   }
-
 }
