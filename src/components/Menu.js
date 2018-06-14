@@ -4,7 +4,7 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import { NavLink } from 'react-router-dom';
-import BlockList from '../containers/BlockList';
+import BlockList from './BlockList';
 import {redoState, undoState} from '../actions/undoActions';
 // style
 import '../styles/Menu.scss';

@@ -1,69 +1,35 @@
-/**
- * Created by bogdan on 29.03.18.
- */
-import {createStore, compose} from 'redux';
-import middleware from './middleware';
-import throttle from 'lodash/throttle';
-import debounce from 'lodash/debounce';
-import * as api from './api';
+import { createStore, applyMiddleware } from "redux"
 
+import thunk from "redux-thunk"
 
-import reducer from './reducers';
-import {loadState, saveState} from './utils/localStorage';
+import throttle from "lodash/throttle"
+import debounce from "lodash/debounce"
 
+import * as api from "./api"
+
+import reducer from "./reducers"
+import { loadState, saveState } from "./utils/localStorage"
+import { compose } from "ramda"
 
 const configureStore = () => {
-    const persistedState = loadState() || {
-        // const persistedState = {
-        editorState: {
-            past: [],
-            present: {
-                blocks: [
-                    // {
-                    //     blockType: 'Grid',
-                    //     children: [
-                    //         {
-                    //
-                    //             blockType: 'Regular',
-                    //             flex: 12
-                    //         },
-                    //         {
-                    //             blockType: 'Regular',
-                    //             flex: 12
-                    //         }
-                    //     ]
-                    // },
-                    // {
-                    //     blockType: 'Grid',
-                    //     children: [],
-                    // },
-                    //
-                    // {
-                    //     blockType: 'Grid',
-                    //     children: [],
-                    // },
-                ],
-            },
-            future: [],
-        },
-    };
-    // console.log(persistedState);
-    const composeEnhancers =  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-    const store = createStore(reducer, persistedState, composeEnhancers());
+  const persistedState = loadState()
+  const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose
 
-    store.subscribe(throttle(() => {
-        // console.log('saveState');
-        saveState(store.getState());
-    }, 1000));
+  const store = createStore(reducer, persistedState, composeEnhancers(applyMiddleware(thunk)))
 
-    store.subscribe(debounce(() => {
-        const {editorState, documents} = store.getState();
-        // console.log('updateDocument', editorState.present.blocks);
-        if(documents && documents.current)
-        if(documents.current) api.updateDocument(documents.current, {tree:editorState.present.blocks});
-    }, 5000));
+  store.subscribe(throttle(() => saveState(store.getState()), 1000))
 
-    return store;
-};
+  store.subscribe(
+    debounce(() => {
+      const { editorState, documents } = store.getState()
+      if (documents && documents.current)
+        api.updateDocument(documents.current, {
+          tree: editorState.present.blocks,
+        })
+    }, 5000),
+  )
 
-export default configureStore;
+  return store
+}
+
+export default configureStore

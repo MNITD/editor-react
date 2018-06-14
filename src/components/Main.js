@@ -1,43 +1,44 @@
-import React, {Component} from 'react';
-import { NavLink } from 'react-router-dom';
-import {connect} from 'react-redux';
-import {getDocuments} from '../actions/fetchActions';
-import Header from './Header';
+import React, { Component } from "react"
+import { NavLink } from "react-router-dom"
+import { connect } from "react-redux"
+import { getDocuments } from "../actions/fetchActions"
+import Header from "./Header"
 
-import '../styles/Main.scss';
+import "../styles/Main.scss"
+import { compose } from "ramda"
+import { getAllDocuments } from "../reducers"
+import { lifecycle } from "recompose"
 
-class Main extends Component {
-    constructor(props){
-        super(props);
-        props.getDocuments();//.then(documents => this.setState({...this.state, documents}));
-    }
-    getDocumentList(){
-        const {documents} = this.props;
-        return documents.map(({name, id, link}) => (
-                <li key={id} className={'main__item'}>
-                    <span className={'main__name'}>{name}</span>
-                    <NavLink to={`/edit/${id}`}>Edit</NavLink>
-                    {link? (<NavLink to={link}>link</NavLink>): ''}
-                </li>
-            )
-        );
-    }
-    render(){
-        return (
-            <div className={'main'}>
-                <Header/>
-                <ul className={'main__list'}>
-                    {this.getDocumentList()}
-                </ul>
-            </div>
-        );
-    }
-}
+const DocumentList = ({ documents }) => (
+  <ul className={"main__list"}>
+    {documents.map(({ name, id, link }) => (
+      <li key={id} className={"main__item"}>
+        <span className={"main__name"}>{name}</span>
+        <NavLink to={`/edit/${id}`}>Edit</NavLink>
 
-const mapStateToProps = (state) => {
-    console.log(state);
-    const {documents: {all}}= state;
-    return {documents: all};
-};
+        {link ? <NavLink to={link}>link</NavLink> : ""}
+      </li>
+    ))}
+  </ul>
+)
 
-export default connect(mapStateToProps, (dispatch) => ({getDocuments: getDocuments(dispatch)}) )(Main);
+const Main = ({ documents }) => (
+  <div className={"main"}>
+    <Header />
+    <DocumentList documents={documents} />
+  </div>
+)
+
+const enhance = compose(
+  connect(
+    state => ({ documents: getAllDocuments(state) }), //
+    { getDocuments },
+  ),
+  lifecycle({
+    componentWillMount() {
+      this.props.getDocuments() //TODO: fix it
+    },
+  }),
+)
+
+export default enhance(Main)

@@ -3,7 +3,7 @@
  */
 import React, {Component} from 'react';
 import WorkArea from './WorkArea';
-import Menu from '../components/Menu';
+import Menu from './Menu';
 import {create} from '../lib/drag';
 import * as resize from '../lib/resize';
 import keyHandler from '../lib/keyHandler';
@@ -18,7 +18,7 @@ import {updateShadowRoot} from '../utils/shadowRoot';
 import '../styles/DragNDrop.scss';
 import '../styles/Resize.scss';
 
-class App extends Component {
+class Editor extends Component {
     constructor(props) {
         super(props);
 
@@ -450,4 +450,4 @@ export default connect(mapStateToProps, (dispatch) => {
         ...bindActionCreators({addBlock, moveBlock, deleteBlock, resizeBlock, undoState, redoState}, dispatch),
         getDocument: getDocument(dispatch),
     };
-})(App);
+})(Editor);
