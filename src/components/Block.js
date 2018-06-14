@@ -2,7 +2,7 @@
  * Created by bogdan on 22.02.18.
  */
 import React, {Component} from 'react';
-import 'wired-elements';
+// import 'wired-elements';
 import {updateShadowRoot} from '../utils/shadowRoot';
 
 // style

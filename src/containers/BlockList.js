@@ -18,7 +18,7 @@ class BlockList extends Component {
                         {blockType: 'Text', col: 12},
                         {blockType: 'Regular', col: 12},
                         {blockType: 'Empty', col: 12},
-                        {blockType: 'WiredButton', col: 12},
+                        // {blockType: 'WiredButton', col: 12},
                         // {blockType: 'WiredInput', col: 12},
                     ],
                 },
