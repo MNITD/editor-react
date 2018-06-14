@@ -1,9 +1,11 @@
 const makeRequest = async (url, method, data) =>  {
     console.log(url, method, data);
+    const token = localStorage.getItem('token');
     const body = {
         body: JSON.stringify(data),
         headers: {
             'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`,
         },
         method,
     };

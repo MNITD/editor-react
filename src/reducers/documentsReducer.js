@@ -1,5 +1,9 @@
 
 const documents = (state={byId:{}, all:[], current:null}, action) =>{
+
+    console.log('action.type', action.type);
+    console.log('state', state);
+
     switch (action.type) {
         case 'GET_DOCUMENTS':{
             return {...state, all: action.documents};
@@ -8,8 +12,10 @@ const documents = (state={byId:{}, all:[], current:null}, action) =>{
             const {document} = action;
             return {...state, byId: {...state.byId, [document.id]: document}, current: document.id};
         }
-        default:
+        default:{
             return state;
+
+        }
     }
 };
 

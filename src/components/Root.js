@@ -7,6 +7,7 @@ import Main from './Main';
 import {Provider} from 'react-redux';
 import {BrowserRouter as Router, Route} from 'react-router-dom';
 import Login from './Login';
+import Register from './Register';
 
 const Root = ({store}) => (
     <Provider store={store}>
@@ -15,6 +16,7 @@ const Root = ({store}) => (
                 <Route path="/" exact={true} component={Main}/>
                 {/*<Route path="/" exact={true} component={Login}/>*/}
                 <Route path="/login" component={Login}/>
+                <Route path="/register" component={Register}/>
                 <Route path="/edit/:id" component={App}/>
                 {/*<Route path="/" exact={true} component={App}/>*/}
             </div>

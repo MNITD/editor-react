@@ -34,8 +34,9 @@ class Main extends Component {
     }
 }
 
-const mapStateToProps = ({documents: {all}}) => {
-    // console.log(state);
+const mapStateToProps = (state) => {
+    console.log(state);
+    const {documents: {all}}= state;
     return {documents: all};
 };
 

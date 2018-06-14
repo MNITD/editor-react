@@ -1,7 +1,7 @@
 /**
  * Created by bogdan on 29.03.18.
  */
-import {createStore} from 'redux';
+import {createStore, compose} from 'redux';
 import middleware from './middleware';
 import throttle from 'lodash/throttle';
 import debounce from 'lodash/debounce';
@@ -48,7 +48,8 @@ const configureStore = () => {
         },
     };
     // console.log(persistedState);
-    const store = createStore(reducer, persistedState, middleware);
+    const composeEnhancers =  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+    const store = createStore(reducer, persistedState, composeEnhancers());
 
     store.subscribe(throttle(() => {
         // console.log('saveState');
@@ -58,7 +59,8 @@ const configureStore = () => {
     store.subscribe(debounce(() => {
         const {editorState, documents} = store.getState();
         // console.log('updateDocument', editorState.present.blocks);
-        api.updateDocument(documents.current, {tree:editorState.present.blocks});
+        if(documents && documents.current)
+        if(documents.current) api.updateDocument(documents.current, {tree:editorState.present.blocks});
     }, 5000));
 
     return store;
