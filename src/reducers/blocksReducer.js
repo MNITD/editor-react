@@ -65,7 +65,7 @@ const addGrid = ({ blocks }, parentPath) => {
 
 const checkAndRemove = (state, parentPath) => {
   const parentNode = getNode(state, parentPath)
-  if (parentNode.children.length === 0) state.splice(parentPath[0], 1)
+  if (parentNode.children.length === 0) state.blocks.splice(parentPath[0], 1)
 }
 
 const blocks = (state = [], action) => {

@@ -7,19 +7,19 @@ import keyHandler from "../lib/keyHandler"
 import { connect } from "react-redux"
 import { addBlock, deleteBlock, moveBlock, resizeBlock } from "../actions/blockActions"
 import { getDocument } from "../actions/fetchActions"
+import { redoState, undoState } from "../actions/undoActions"
 
 //style
 import "../styles/DragNDrop.scss"
 import "../styles/Resize.scss"
+
 
 class Editor extends Component {
   constructor(props) {
     super(props)
 
     this.tempState = { draggables: [], enableDragging: true, enableResizing: true }
-    const {
-      match: { params },
-    } = props
+    const { match: { params } } = props
     props.getDocument(params.id)
     keyHandler(props)
   }
@@ -399,8 +399,8 @@ class Editor extends Component {
   render() {
     return (
       <div>
-        <Menu initDraggable={this.initDraggable} />
-        <WorkArea blocks={this.props.blocks} initWorkArea={this.initWorkArea} initDraggable={this.initDraggable} />
+        <Menu initDraggable={this.initDraggable}/>
+        <WorkArea blocks={this.props.blocks} initWorkArea={this.initWorkArea} initDraggable={this.initDraggable}/>
       </div>
     )
   }
@@ -412,4 +412,6 @@ export default connect(({ editorState }) => ({ blocks: [...editorState.present.b
   deleteBlock,
   resizeBlock,
   getDocument,
+  undoState,
+  redoState
 })(Editor)
